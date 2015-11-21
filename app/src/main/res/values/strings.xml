@@ -5,9 +5,8 @@
     <string name="school">School</string>
     <string name="default_school">amstelveencollege</string>
     <string name="code">Code</string>
-    <string name="login">Login</string>
+    <string name="login">Inloggen</string>
 
     <string name="action_settings">Instellingen</string>
-    <string name="search">Zoeken</string>
 
 </resources>
