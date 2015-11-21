@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Rooster</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="welcome">Dit is de login pagina van deze app.</string>
+    <string name="school">School</string>
+    <string name="default_school">amstelveencollege</string>
+    <string name="code">Code</string>
+    <string name="login">Login</string>
+
+    <string name="action_settings">Instellingen</string>
+    <string name="search">Zoeken</string>
+
 </resources>

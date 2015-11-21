@@ -29,6 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/stat_notify_sync" />
+        android:src="@drawable/ic_action_navigation_refresh" />
 
 </android.support.design.widget.CoordinatorLayout>
