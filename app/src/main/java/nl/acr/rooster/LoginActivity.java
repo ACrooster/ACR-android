@@ -1,5 +1,7 @@
 package nl.acr.rooster;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -8,25 +10,42 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import go.framework.Framework;
 
 public class LoginActivity extends AppCompatActivity {
 
+    Toolbar toolbar;
+    FloatingActionButton fab;
+
+    EditText code;
+    Button login;
+
+    ScrollView loginView;
+    LinearLayout progressView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        code = (EditText)findViewById(R.id.code);
+        login = (Button) findViewById(R.id.loginButton);
+
+        loginView = (ScrollView)findViewById(R.id.loginView);
+        progressView = (LinearLayout)findViewById(R.id.progressView);
+
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -35,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button login = (Button) findViewById(R.id.loginButton);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        EditText code = (EditText)findViewById(R.id.code);
         code.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -57,30 +74,34 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set the school name
         Framework.SetSchool("amstelveencollege");
-
     }
 
     // TODO: This needs to be handled better
     private void attemptLogin() {
         showProgress(true);
 
-        EditText code = (EditText)findViewById(R.id.code);
-
         Log.w("Code", code.getText().toString());
 
+        // TODO: Figure out a way to do this in the background, app currently freezes
         String token = Framework.GetToken(code.getText().toString());
+//      String token = null;
 
+        // NOTE: This is temporary test output
         TextView textView = (TextView) findViewById(R.id.codeView);
-        if (token != null) {
-            Log.w("Token", token);
+        switch ((int)Framework.GetError()) {
+            case (int)Framework.ERROR_NONE:
+                Log.w("Token", token);
+                break;
 
-            // NOTE: This is just for testing
-            textView.setText("Acces token: " + token);
-        } else {
+            case (int)Framework.ERROR_CONNECTION:
+                showProgress(false);
+                textView.setText("Connection error");
+                break;
 
-            showProgress(false);
-            // NOTE: This is just for testing
-            textView.setText("Invalid login");
+            case (int)Framework.ERROR_UNKNOWN:
+                showProgress(false);
+                textView.setText("Unknown error");
+                break;
         }
     }
 
@@ -88,29 +109,20 @@ public class LoginActivity extends AppCompatActivity {
 
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+        loginView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                loginView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
 
-    }
+        progressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
