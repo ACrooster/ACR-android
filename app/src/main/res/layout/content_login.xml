@@ -8,7 +8,9 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".LoginActivity"
     tools:showIn="@layout/activity_login"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:clickable="true" >
 
     <LinearLayout
         android:orientation="vertical"
@@ -33,7 +35,7 @@
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-    android:id="@+id/loginView" >
+        android:id="@+id/loginView" >
 
         <LinearLayout
             android:orientation="vertical"
@@ -42,7 +44,10 @@
             android:paddingBottom="@dimen/activity_vertical_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin" >
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:clickable="true" >
 
             <android.support.v7.widget.AppCompatImageView
                 android:layout_width="wrap_content"
@@ -59,10 +64,11 @@
             <android.support.v7.widget.AppCompatEditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/code"
+                android:id="@+id/codeText"
                 android:hint="@string/code"
                 android:autoText="false"
                 android:inputType="number"
+                android:singleLine="true"
                 />
             </android.support.design.widget.TextInputLayout>
 

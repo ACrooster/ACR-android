@@ -7,6 +7,8 @@
     <string name="code">Code</string>
     <string name="login">Inloggen</string>
 
+    <string name="code_invalid_length">De code bestaat uit 12 cijfers</string>
+
     <string name="action_settings">Instellingen</string>
 
 </resources>

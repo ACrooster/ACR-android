@@ -2,6 +2,8 @@ package nl.acr.rooster;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,11 +23,9 @@ import android.widget.TextView;
 import go.framework.Framework;
 
 public class LoginActivity extends AppCompatActivity {
-
     Toolbar toolbar;
-    FloatingActionButton fab;
 
-    EditText code;
+    EditText codeText;
     Button login;
 
     ScrollView loginView;
@@ -36,23 +37,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        code = (EditText)findViewById(R.id.code);
+        codeText = (EditText) findViewById(R.id.codeText);
         login = (Button) findViewById(R.id.loginButton);
 
         loginView = (ScrollView)findViewById(R.id.loginView);
         progressView = (LinearLayout)findViewById(R.id.progressView);
 
         setSupportActionBar(toolbar);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        code.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        codeText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -72,57 +64,124 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        codeText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if(v.getId() == R.id.codeText && !hasFocus) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        });
+
         // Set the school name
         Framework.SetSchool("amstelveencollege");
     }
 
     // TODO: This needs to be handled better
     private void attemptLogin() {
-        showProgress(true);
-
-        Log.w("Code", code.getText().toString());
-
-        // TODO: Figure out a way to do this in the background, app currently freezes
-        String token = Framework.GetToken(code.getText().toString());
-//      String token = null;
-
-        // NOTE: This is temporary test output
-        TextView textView = (TextView) findViewById(R.id.codeView);
-        switch ((int)Framework.GetError()) {
-            case (int)Framework.ERROR_NONE:
-                Log.w("Token", token);
-                break;
-
-            case (int)Framework.ERROR_CONNECTION:
-                showProgress(false);
-                textView.setText("Connection error");
-                break;
-
-            case (int)Framework.ERROR_UNKNOWN:
-                showProgress(false);
-                textView.setText("Unknown error");
-                break;
+        // Check the length of the code to make sure it is valid
+        if(codeText.getText().length() != 12) {
+            codeText.setError(getString(R.string.code_invalid_length));
+            return;
         }
+
+        TokenTask tokenTask = new TokenTask(codeText.getText().toString());
+        tokenTask.execute((Void) null);
     }
 
-    private void showProgress(final boolean show) {
+    public class TokenTask extends AsyncTask<Void, Void, Void> {
+        private String code = null;
+        private String token = null;
+        private Boolean gotToken = false;
 
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        TokenTask(String mCode) {
+            code = mCode;
+        }
 
-        loginView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                loginView.setVisibility(show ? View.GONE : View.VISIBLE);
+        @Override
+        protected void onPreExecute() {
+            showProgress(true);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            token = Framework.GetToken(code);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final Void success) {
+
+            TextView textView = (TextView) findViewById(R.id.codeView);
+            switch ((int) Framework.GetError()) {
+                case (int) Framework.ERROR_NONE:
+                    gotToken = true;
+                    if (token == null) {
+                        // NOTE: This should never ever happen, but just in case
+                        Log.e("Token", "Received null token");
+                        showProgress(false);
+                        gotToken = false;
+                        break;
+                    }
+                    // TODO: Switch to next activity
+                    // TODO: Make sure the token gets stored somewhere
+                    Log.w("Token", token);
+                    finish();
+                    break;
+
+                case (int) Framework.ERROR_CONNECTION:
+                    textView.setText("Connection error");
+                    break;
+
+                case (int) Framework.ERROR_UNKNOWN:
+                    textView.setText("Unknown error");
+                    break;
             }
-        });
 
-
-        progressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            // If the login was unsuccessful display the login screen again
+            if (Framework.GetError() != Framework.ERROR_NONE) {
+                showProgress(false);
+                gotToken = false;
             }
-        });
+        }
 
+        @Override
+        protected void onCancelled() {
+            token = null;
+            showProgress(false);
+            gotToken = false;
+        }
+
+        public Boolean gotToken() {
+            return gotToken;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        private void showProgress(final boolean show) {
+
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            loginView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    loginView.setVisibility(show ? View.GONE : View.VISIBLE);
+                }
+            });
+
+
+            progressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+
+        }
     }
 }
