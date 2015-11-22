@@ -68,9 +68,9 @@ public class ScheduleActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_schedule_class) {
 
-        } else if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_preferences) {
 
-        } else if (id == R.id.nav_info) {
+        } else if (id == R.id.nav_info_details) {
 
         }
 

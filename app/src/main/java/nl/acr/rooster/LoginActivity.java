@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     Toolbar toolbar;
 
     EditText codeText;
+    TextInputLayout codeTextLayout;
     Button login;
 
     ScrollView loginView;
@@ -38,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         codeText = (EditText) findViewById(R.id.codeText);
+        codeTextLayout = (TextInputLayout) findViewById(R.id.codeTextLayout);
         login = (Button) findViewById(R.id.loginButton);
 
         loginView = (ScrollView)findViewById(R.id.loginView);
@@ -86,8 +89,8 @@ public class LoginActivity extends AppCompatActivity {
     // TODO: This needs to be handled better
     private void attemptLogin() {
         // Check the length of the code to make sure it is valid
-        if(codeText.getText().length() != 12) {
-            codeText.setError(getString(R.string.code_invalid_length));
+        if(!Framework.IsValid(codeText.getText().toString())) {
+            codeTextLayout.setError(getString(R.string.code_invalid_length));
             return;
         }
 
@@ -118,7 +121,8 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Void success) {
             TextView textView = (TextView)findViewById(R.id.codeView);
-            switch ((int) Framework.GetError()) {
+            int errorCode = (int)Framework.GetError();
+            switch (errorCode) {
                 case (int) Framework.ERROR_NONE:
                     if (token == null) {
                         // NOTE: This should never ever happen, but just in case
@@ -140,10 +144,19 @@ public class LoginActivity extends AppCompatActivity {
                 case (int) Framework.ERROR_UNKNOWN:
                     textView.setText("Unknown error");
                     break;
+
+                case (int) Framework.ERROR_CODE:
+                    codeTextLayout.setError(getString(R.string.code_invalid));
+                    codeText.requestFocus();
+                    codeText.setText("");
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(codeText, InputMethodManager.SHOW_IMPLICIT);
+                    break;
+
             }
 
             // If the login was unsuccessful display the login screen again
-            if (Framework.GetError() != Framework.ERROR_NONE) {
+            if (errorCode != Framework.ERROR_NONE) {
                 showProgress(false);
             }
         }

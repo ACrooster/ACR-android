@@ -21,5 +21,6 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_schedule"
         app:menu="@menu/activity_schedule_drawer" />
+    <!--app:itemTextColor="@color/colorPrimary"-->
 
 </android.support.v4.widget.DrawerLayout>

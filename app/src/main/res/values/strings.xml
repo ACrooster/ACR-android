@@ -7,6 +7,7 @@
     <string name="code">Code</string>
     <string name="login">Inloggen</string>
 
+    <string name="code_invalid">Deze code is ongeldig</string>
     <string name="code_invalid_length">De code bestaat uit 12 cijfers</string>
 
     <string name="title_activity_login">Inloggen</string>
@@ -21,7 +22,7 @@
     <string name="nav_schedule_classrooms">Lokalenroosters</string>
     <string name="nav_schedule_class">Klasroosters</string>
 
-    <string name="nav_settings">Instellingen</string>
-    <string name="nav_info">Over</string>
+    <string name="nav_preferences">Instellingen</string>
+    <string name="nav_info_details">Over</string>
 
 </resources>

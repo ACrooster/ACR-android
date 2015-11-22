@@ -25,14 +25,14 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="Tim Huizinga"
-        tools:text="Name Surname"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+    <!--tools:text="Name Surname"-->
 
     <TextView
         android:id="@+id/student_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="108770"
-        tools:text="Student ID" />
+        android:text="108770" />
+        <!--tools:text="Student ID" />-->
 
 </LinearLayout>
