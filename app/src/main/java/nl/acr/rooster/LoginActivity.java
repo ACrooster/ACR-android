@@ -3,10 +3,9 @@ package nl.acr.rooster;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -99,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
     public class TokenTask extends AsyncTask<Void, Void, Void> {
         private String code = null;
         private String token = null;
-        private Boolean gotToken = false;
 
         TokenTask(String mCode) {
             code = mCode;
@@ -119,22 +117,20 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Void success) {
-
             TextView textView = (TextView)findViewById(R.id.codeView);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
-                    gotToken = true;
                     if (token == null) {
                         // NOTE: This should never ever happen, but just in case
                         Log.e("Token", "Received null token");
                         showProgress(false);
-                        gotToken = false;
                         break;
                     }
                     // TODO: Switch to next activity
                     // TODO: Make sure the token gets stored somewhere
                     Log.w("Token", token);
-                    finish();
+                    Intent goToSchedule = new Intent(getApplicationContext(), ScheduleActivity.class);
+                    startActivity(goToSchedule);
                     break;
 
                 case (int) Framework.ERROR_CONNECTION:
@@ -149,7 +145,6 @@ public class LoginActivity extends AppCompatActivity {
             // If the login was unsuccessful display the login screen again
             if (Framework.GetError() != Framework.ERROR_NONE) {
                 showProgress(false);
-                gotToken = false;
             }
         }
 
@@ -157,15 +152,6 @@ public class LoginActivity extends AppCompatActivity {
         protected void onCancelled() {
             token = null;
             showProgress(false);
-            gotToken = false;
-        }
-
-        public Boolean gotToken() {
-            return gotToken;
-        }
-
-        public String getToken() {
-            return token;
         }
 
         private void showProgress(final boolean show) {
