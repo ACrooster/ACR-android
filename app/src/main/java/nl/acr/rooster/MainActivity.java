@@ -1,6 +1,7 @@
 package nl.acr.rooster;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,8 @@ import nl.acr.rooster.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String PREFS_NAME = "ACRPrefs";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,10 +22,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // NOTE: This is set to true for testing
-        boolean hasToken = true;
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
-        if (hasToken) {
+        // NOTE: This should be removed later on, only for testing
+        boolean testing = false;
+
+        if (settings.contains("token") && !testing) {
             Intent goToSchedule = new Intent(getApplicationContext(), ScheduleActivity.class);
             startActivity(goToSchedule);
         } else {

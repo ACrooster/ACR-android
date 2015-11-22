@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -132,6 +133,10 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     // TODO: Switch to next activity
                     // TODO: Make sure the token gets stored somewhere
+                    SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString("token", token);
+                    editor.commit();
                     Log.w("Token", token);
                     Intent goToSchedule = new Intent(getApplicationContext(), ScheduleActivity.class);
                     startActivity(goToSchedule);
