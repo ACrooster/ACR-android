@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     // TODO: Switch to next activity
                     // TODO: Make sure the token gets stored somewhere
-                    SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME, 0);
+                    SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("token", token);
                     editor.commit();
