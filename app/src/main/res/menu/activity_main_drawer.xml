@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--NOTE: The icons are placeholders-->
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/group1" >
+        <item
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/nav_schedule" />
+        <item
+            android:id="@+id/nav_schedule_students"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/nav_schedule_students" />
+        <item
+            android:id="@+id/nav_schedule_teachers"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/nav_schedule_teachers" />
+        <item
+            android:id="@+id/nav_schedule_class"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/nav_schedule_class" />
+        <item
+            android:id="@+id/nav_schedule_classrooms"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/nav_schedule_classrooms" />
+    </group>
+
+    <group
+        android:checkableBehavior="none"
+        android:id="@+id/group2" >
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/nav_settings" />
+            <item
+                android:id="@+id/nav_info"
+                android:icon="@drawable/ic_info"
+                android:title="@string/nav_info" />
+    </group>
+
+</menu>

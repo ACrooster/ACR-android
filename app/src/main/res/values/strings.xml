@@ -9,6 +9,18 @@
 
     <string name="code_invalid_length">De code bestaat uit 12 cijfers</string>
 
-    <string name="action_settings">Instellingen</string>
+    <string name="title_activity_login">Inloggen</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="nav_schedule">Mijn rooster</string>
+    <string name="nav_schedule_students">Leerlingroosters</string>
+    <string name="nav_schedule_teachers">Docentenroosters</string>
+    <string name="nav_schedule_classrooms">Lokalenroosters</string>
+    <string name="nav_schedule_class">Klasroosters</string>
+
+    <string name="nav_settings">Instellingen</string>
+    <string name="nav_info">Over</string>
 
 </resources>

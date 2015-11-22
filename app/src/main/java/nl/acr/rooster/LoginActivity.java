@@ -79,6 +79,11 @@ public class LoginActivity extends AppCompatActivity {
         Framework.SetSchool("amstelveencollege");
     }
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
     // TODO: This needs to be handled better
     private void attemptLogin() {
         // Check the length of the code to make sure it is valid
@@ -115,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Void success) {
 
-            TextView textView = (TextView) findViewById(R.id.codeView);
+            TextView textView = (TextView)findViewById(R.id.codeView);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
                     gotToken = true;
