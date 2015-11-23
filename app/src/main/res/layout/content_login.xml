@@ -59,7 +59,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/codeTextLayout"
-                android:layout_marginTop="30dp">
+                android:layout_marginTop="24dp">
 
             <android.support.v7.widget.AppCompatEditText
                 android:layout_width="fill_parent"
@@ -77,14 +77,14 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/loginButton"
                 android:text="@string/login"
-                android:layout_marginTop="30dp" />
+                android:layout_marginTop="24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="PLACEHOLDER"
                 android:id="@+id/codeView"
-                android:layout_marginTop="30dp" />
+                android:layout_marginTop="24dp" />
         </LinearLayout>
     </ScrollView>
 

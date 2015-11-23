@@ -10,20 +10,20 @@
     <string name="code_invalid">Deze code is ongeldig</string>
     <string name="code_invalid_length">De code bestaat uit 12 cijfers</string>
 
-    <string name="title_activity_login">Inloggen</string>
     <string name="title_activity_schedule">Mijn rooster</string>
+    <string name="title_activity_schedule_announcements">Mededelingen</string>
+    <string name="title_activity_schedule_friends">Vrienden</string>
+
+    <string name="title_activity_login">Inloggen</string>
     <string name="title_activity_preferences">Instellingen</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="nav_schedule">Mijn rooster</string>
-    <string name="nav_schedule_students">Leerlingroosters</string>
-    <string name="nav_schedule_teachers">Docentenroosters</string>
-    <string name="nav_schedule_classrooms">Lokalenroosters</string>
-    <string name="nav_schedule_class">Klasroosters</string>
+    <string name="search_title">Zoeken</string>
+    <string name="search_hint">Zoeken naar andere roosters</string>
 
     <string name="nav_preferences">Instellingen</string>
-    <string name="nav_info_details">Over</string>
+    <string name="nav_info">Over</string>
 
 </resources>
