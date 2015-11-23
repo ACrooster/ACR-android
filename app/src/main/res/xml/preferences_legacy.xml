@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.jenzz.materialpreference.PreferenceCategory
+        android:title="Category" >
+        <com.jenzz.materialpreference.SwitchPreference
+            android:key="test_switch"
+            android:defaultValue="true"
+            android:title="Switch test" />
+    </com.jenzz.materialpreference.PreferenceCategory>
+</PreferenceScreen>

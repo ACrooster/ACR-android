@@ -70,6 +70,8 @@ public class ScheduleActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_preferences) {
 
+            Intent goToPreferences = new Intent(getApplicationContext(), PreferencesActivity.class);
+            startActivity(goToPreferences);
         } else if (id == R.id.nav_info_details) {
 
         }

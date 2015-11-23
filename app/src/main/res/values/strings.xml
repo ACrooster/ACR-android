@@ -12,6 +12,7 @@
 
     <string name="title_activity_login">Inloggen</string>
     <string name="title_activity_schedule">Mijn rooster</string>
+    <string name="title_activity_preferences">Instellingen</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
