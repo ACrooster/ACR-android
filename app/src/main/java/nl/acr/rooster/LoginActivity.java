@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("token", token);
-                    editor.commit();
+                    editor.apply();
                     Log.w("Token", token);
                     Intent goToSchedule = new Intent(getApplicationContext(), ScheduleActivity.class);
                     startActivity(goToSchedule);

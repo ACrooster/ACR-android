@@ -3,5 +3,9 @@
     <color name="colorPrimary">#72A40A</color>
     <color name="colorPrimaryDark">#5C8700</color>
     <color name="colorAccent">#5C8700</color>
+    <color name="colorAnnouncements">#1383df</color>
+    <color name="colorAnnouncementsDark">#0065b7</color>
+    <color name="colorFriends">#df8a13</color>
+    <color name="colorFriendsDark">#be6f00</color>
     <!--<color name="colorAccent">#D44B1C</color>-->
 </resources>

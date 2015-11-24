@@ -1,13 +1,21 @@
 package nl.acr.rooster;
 
 import android.app.Fragment;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ThemedSpinnerAdapter;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +29,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -37,6 +46,7 @@ public class ScheduleActivity extends AppCompatActivity
         setContentView(R.layout.activity_schedule);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        assert (getSupportActionBar() != null);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         String weekList[] = new String[53];
@@ -72,6 +82,10 @@ public class ScheduleActivity extends AppCompatActivity
 
         replaceFragment(sf);
         sf.setWeek(47);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
     }
 
     @Override
@@ -84,45 +98,77 @@ public class ScheduleActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.search) {
+            Intent goToSearch = new Intent(getApplicationContext(), SearchActivity.class);
+            startActivity(goToSearch);
+        }
+
+        return true;
+    }
+
     static ScheduleFragment sf = new ScheduleFragment();
     static AnnouncementsFragment af = new AnnouncementsFragment();
     static FriendsFragment ff = new FriendsFragment();
 
+    // TODO: Move some off this stuff into seperate functions
+    // TODO: Make sure the navdrawer still renders in status bar
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_schedule) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-            getSupportActionBar().setTitle(R.string.title_activity_schedule);
+        Spinner spinner = (Spinner)findViewById(R.id.week_spinner);
+        ActionBar ab = getSupportActionBar();
+        Window window = getWindow();
+        assert(ab != null);
 
-            Spinner spinner = (Spinner)findViewById(R.id.week_spinner);
+        if (id == R.id.nav_schedule) {
+            ab.setDisplayShowTitleEnabled(false);
+            ab.setTitle(R.string.title_activity_schedule);
+            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+            }
+
             spinner.setVisibility(View.VISIBLE);
+            menu.findItem(R.id.search).setVisible(true);
 
             replaceFragment(sf);
         } else if (id == R.id.nav_announcements) {
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setTitle(R.string.title_activity_schedule_announcements);
+            ab.setDisplayShowTitleEnabled(true);
+            ab.setTitle(R.string.title_activity_schedule_announcements);
+            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorAnnouncements)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.setStatusBarColor(getResources().getColor(R.color.colorAnnouncementsDark));
+            }
 
-            Spinner spinner = (Spinner)findViewById(R.id.week_spinner);
             spinner.setVisibility(View.GONE);
+            menu.findItem(R.id.search).setVisible(false);
 
             replaceFragment(af);
         } else if (id == R.id.nav_friends) {
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setTitle(R.string.title_activity_schedule_friends);
+            ab.setDisplayShowTitleEnabled(true);
+            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorFriends)));
+            ab.setTitle(R.string.title_activity_schedule_friends);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.setStatusBarColor(getResources().getColor(R.color.colorFriendsDark));
+            }
 
-            Spinner spinner = (Spinner)findViewById(R.id.week_spinner);
             spinner.setVisibility(View.GONE);
+            menu.findItem(R.id.search).setVisible(false);
 
             replaceFragment(ff);
         } else if (id == R.id.nav_preferences) {
 
             Intent goToPreferences = new Intent(getApplicationContext(), PreferencesActivity.class);
             startActivity(goToPreferences);
-        } else if (id == R.id.nav_info_details) {
+        } else if (id == R.id.nav_info) {
 
         }
 
@@ -133,15 +179,20 @@ public class ScheduleActivity extends AppCompatActivity
 
     private void replaceFragment(Fragment fragment) {
 
+        // TODO: Check if the transition is really necessary
         getFragmentManager().beginTransaction()
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .replace(R.id.schedule_fragment_container, fragment).commit();
     }
 
+    private Menu menu;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.schedule_menu, menu);
+
+        this.menu = menu;
 
         return true;
     }
@@ -231,8 +282,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
-            View rootView =  inflater.inflate(R.layout.fragment_schedule_announcements, containter, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_schedule_announcements, containter, false);
         }
     }
 
@@ -240,8 +290,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
-            View rootView =  inflater.inflate(R.layout.fragment_schedule_friends, containter, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_schedule_friends, containter, false);
         }
     }
 }

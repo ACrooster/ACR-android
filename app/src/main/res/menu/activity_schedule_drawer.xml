@@ -26,7 +26,7 @@
                 android:icon="@drawable/ic_settings"
                 android:title="@string/nav_preferences" />
             <item
-                android:id="@+id/nav_info_details"
+                android:id="@+id/nav_info"
                 android:icon="@drawable/ic_info"
                 android:title="@string/nav_info" />
     </group>
