@@ -266,8 +266,6 @@ public class ScheduleActivity extends AppCompatActivity
 
             // TODO: This is just test code
             if (rootView != null) {
-                TextView weekLabel = (TextView) rootView.findViewById(R.id.week_label);
-                weekLabel.setText("Week " + (week + 1));
             }
         }
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_view"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="2dp"
+    android:layout_marginLeft="56dp"
+    android:layout_marginRight="24dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="8dp"
+    android:focusableInTouchMode="false"
+    android:focusable="false"
+    card_view:cardBackgroundColor="#a1a1a1">
+
+    <TextView
+        android:id="@+id/week_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Natuurkunde 0.011 VRI\n9:30 - 10:30 nat1"
+        android:layout_below="@+id/section_label"
+        android:padding="8dp" />
+</android.support.v7.widget.CardView>
