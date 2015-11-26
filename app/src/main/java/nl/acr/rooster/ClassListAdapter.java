@@ -19,7 +19,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
 
     @Override
     public ClassViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_class, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_class, parent, false);
 
         return  new ClassViewHolder(itemView);
     }
@@ -27,11 +27,22 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
         ClassInfo ci = classInfoList.get(position);
-        holder.subject.setText(ci.subject);
-        holder.teacher.setText(ci.teacher);
-        holder.times.setText(ci.times);
-        holder.classRoom.setText(ci.classRoom);
-        holder.card.setCardBackgroundColor(ci.getColor());
+        if (ci.status == Status.DATE) {
+
+            holder.card.setVisibility(View.GONE);
+            holder.date.setVisibility(View.VISIBLE);
+
+            holder.date.setText(ci.date);
+        } else {
+            holder.card.setVisibility(View.VISIBLE);
+            holder.date.setVisibility(View.GONE);
+
+            holder.subject.setText(ci.subject);
+            holder.teacher.setText(ci.teacher);
+            holder.times.setText(ci.times);
+            holder.classRoom.setText(ci.classRoom);
+            holder.card.setCardBackgroundColor(ci.getColor());
+        }
     }
 
     @Override
@@ -45,6 +56,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
         protected TextView times;
         protected TextView classRoom;
         protected CardView card;
+        protected TextView date;
 
         public ClassViewHolder(View v) {
             super(v);
@@ -53,6 +65,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
             times = (TextView)v.findViewById(R.id.times);
             classRoom = (TextView)v.findViewById(R.id.classRoom);
             card = (CardView)v.findViewById(R.id.card_view);
+            date = (TextView)v.findViewById(R.id.date);
         }
     }
 

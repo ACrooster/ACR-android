@@ -276,7 +276,7 @@ public class ScheduleActivity extends AppCompatActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
             rootView =  inflater.inflate(R.layout.fragment_schedule, containter, false);
 
-            RecyclerView classList = (RecyclerView) rootView.findViewById(R.id.classList);
+            RecyclerView classList = (RecyclerView) rootView.findViewById(R.id.classListMon);
             classList.setHasFixedSize(true);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayout.VERTICAL);
@@ -289,16 +289,44 @@ public class ScheduleActivity extends AppCompatActivity
 
         private List<ClassInfo> createList() {
             List<ClassInfo> result = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                ClassInfo ci = new ClassInfo();
-                ci.subject = "Natuurkunde 2";
-                ci.teacher = "VRI";
-                ci.times = "8:30 - 9:30";
-                ci.classRoom = "0.011";
-                ci.status = Status.NORMAL;
 
-                result.add(ci);
-            }
+            result.add(new ClassInfo("Maandag 23 november", Status.DATE));
+            result.add(new ClassInfo("Gym", "ENH", "8:30 - 9:30", "S.042", Status.NORMAL));
+            result.add(new ClassInfo("Gym", "ENH", "9:30 - 10:30", "S.042", Status.NORMAL));
+            result.add(new ClassInfo("Wiskunde B 1", "BRM & DRO", "10:50 - 11:50", "3.045", Status.NORMAL));
+            result.add(new ClassInfo("", "", "", "", Status.FREE));
+            result.add(new ClassInfo("Economie 2", "MER", "13:20 - 14:20", "3.040", Status.NORMAL));
+
+            result.add(new ClassInfo("Dinsdag 24 november", Status.DATE));
+            result.add(new ClassInfo("", "", "", "", Status.FREE));
+            result.add(new ClassInfo("", "", "", "", Status.FREE));
+            result.add(new ClassInfo("", "", "", "", Status.FREE));
+            result.add(new ClassInfo("Grieks 1", "NOE", "11:50 - 12:50", "3.034", Status.NORMAL));
+            result.add(new ClassInfo("Scheikunde 1", "VRI", "13:20 - 14:20", "0.011", Status.NORMAL));
+
+            result.add(new ClassInfo("Woensdag 25 november", Status.DATE));
+            result.add(new ClassInfo("Natuurkunde 2", "VRI", "8:30 - 9:30", "0.011", Status.CANCELED));
+            result.add(new ClassInfo("Wiskunde B 1", "BRM & DRO", "9:30 - 10:30", "3.045", Status.NORMAL));
+            result.add(new ClassInfo("Economie 2", "MER", "10:50 - 11:50", "3.040", Status.NORMAL));
+            result.add(new ClassInfo("", "", "", "", Status.FREE));
+            result.add(new ClassInfo("Nederlands", "BCE", "13:20 -14:20 ", "3.005", Status.CANCELED));
+            result.add(new ClassInfo("Engels", "ENT", "14:20 -15:20 ", "3.034", Status.NORMAL));
+
+            result.add(new ClassInfo("Donderdag 26 november", Status.DATE));
+            result.add(new ClassInfo("Grieks 1", "NOE", "8:30 - 9:30", "3.042", Status.CANCELED));
+            result.add(new ClassInfo("Herkansing", "", "9:30 - 10:30", "", Status.ACTIVITY));
+            result.add(new ClassInfo("Herkansing", "", "10:50 - 11:50", "", Status.ACTIVITY));
+            result.add(new ClassInfo("Herkansing", "", "11:50 - 12:50", "", Status.ACTIVITY));
+            result.add(new ClassInfo("Informatica 1", "VBR", "13:20 - 14:20", "0.036", Status.NORMAL));
+            result.add(new ClassInfo("Mentoruur", "BCE & STU", "14:20 - 15:20", "3038 & 3039", Status.NORMAL));
+
+            result.add(new ClassInfo("Vrijdag 27 november", Status.DATE));
+            result.add(new ClassInfo("Scheikunde 1", "VRI", "8:30 - 9:30", "0.011", Status.NORMAL));
+            result.add(new ClassInfo("Wiskunde B 1", "BRM & DRO", "9:30 - 10:30", "3.045", Status.NORMAL));
+            result.add(new ClassInfo("Informatica 1", "VBR", "10:50 - 11:50", "0.036", Status.NORMAL));
+            result.add(new ClassInfo("Natuurkunde 2", "VRI", "11:50 - 12:50", "0.011", Status.NORMAL));
+            result.add(new ClassInfo("", "", "", "", Status.FREE));
+            result.add(new ClassInfo("Grieks 1", "NOE", "14:20 - 15:20", "3042", Status.NORMAL));
 
             return result;
         }

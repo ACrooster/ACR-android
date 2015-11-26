@@ -1,14 +1,13 @@
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/classList"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
 
-<!--<TextView-->
-<!--android:layout_width="wrap_content"-->
-<!--android:layout_height="wrap_content"-->
-<!--android:text="Ma 23 november"-->
-<!--android:id="@+id/textView"-->
-<!--android:textSize="24sp"-->
-<!--android:textColor="#808080" />-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/classListMon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
+
+

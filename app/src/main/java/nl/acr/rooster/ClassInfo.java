@@ -5,7 +5,9 @@ enum Status {
     CHANGED,
     CANCELED,
     ACTIVITY,
-    FREE
+    FREE,
+    DATE
+
 }
 
 public class ClassInfo {
@@ -14,6 +16,21 @@ public class ClassInfo {
     protected String times;
     protected String classRoom;
     protected Status status;
+
+    protected String date;
+
+    ClassInfo(String subject, String teacher, String times, String classRoom, Status status) {
+        this.subject = subject;
+        this.teacher = teacher;
+        this.times = times;
+        this.classRoom = classRoom;
+        this.status = status;
+    }
+
+    ClassInfo(String date, Status status) {
+        this.date = date;
+        this.status = status;
+    }
 
     protected int getColor() {
 
