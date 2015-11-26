@@ -1,123 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/classList"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="nl.acr.rooster.ScheduleActivity$ScheduleFragment">
+    android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ma 23 november"
-            android:id="@+id/textView"
-            android:textSize="24sp"
-            android:textColor="#808080" />
-
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/card_view"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardCornerRadius="2dp"
-            android:layout_marginLeft="56dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            card_view:cardBackgroundColor="#a1a1a1">
-
-            <TextView
-                android:id="@+id/week_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Natuurkunde 0.011 VRI\n9:30 - 10:30 nat1"
-                android:layout_below="@+id/section_label"
-                android:padding="8dp" />
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardCornerRadius="2dp"
-            android:layout_marginLeft="56dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            card_view:cardBackgroundColor="#e1a1a1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Engels 3.034 ENT\n10:50 - 11:50"
-                android:layout_below="@+id/section_label"
-                android:padding="8dp" />
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardCornerRadius="2dp"
-            android:layout_marginLeft="56dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            card_view:cardBackgroundColor="#c4c4c4">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="\n"
-                android:layout_below="@+id/section_label"
-                android:padding="8dp" />
-        </android.support.v7.widget.CardView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="\nDi 24 november"
-            android:textSize="24sp"
-            android:textColor="#808080" />
-
-        <android.support.v7.widget.CardView
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardCornerRadius="2dp"
-            android:layout_marginLeft="56dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            card_view:cardBackgroundColor="#a1a1e1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Wiskunde B 3.005 BRM\n13:20 - 14:20"
-                android:layout_below="@+id/section_label"
-                android:padding="8dp" />
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
-
-</RelativeLayout>
+<!--<TextView-->
+<!--android:layout_width="wrap_content"-->
+<!--android:layout_height="wrap_content"-->
+<!--android:text="Ma 23 november"-->
+<!--android:id="@+id/textView"-->
+<!--android:textSize="24sp"-->
+<!--android:textColor="#808080" />-->

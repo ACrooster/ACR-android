@@ -1,9 +1,6 @@
 package nl.acr.rooster;
 
 import android.app.Fragment;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -12,10 +9,10 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ThemedSpinnerAdapter;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,9 +30,13 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.content.res.Resources.Theme;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScheduleActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -83,9 +84,11 @@ public class ScheduleActivity extends AppCompatActivity
         replaceFragment(sf);
         sf.setWeek(47);
 
+        // TODO: Find a better way that keeps transparency
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+
     }
 
     @Override
@@ -272,23 +275,48 @@ public class ScheduleActivity extends AppCompatActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
             rootView =  inflater.inflate(R.layout.fragment_schedule, containter, false);
+
+            RecyclerView classList = (RecyclerView) rootView.findViewById(R.id.classList);
+            classList.setHasFixedSize(true);
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            llm.setOrientation(LinearLayout.VERTICAL);
+            classList.setLayoutManager(llm);
+            ClassListAdapter ca = new ClassListAdapter(createList());
+            classList.setAdapter(ca);
+
             return rootView;
+        }
+
+        private List<ClassInfo> createList() {
+            List<ClassInfo> result = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                ClassInfo ci = new ClassInfo();
+                ci.subject = "Natuurkunde 2";
+                ci.teacher = "VRI";
+                ci.times = "8:30 - 9:30";
+                ci.classRoom = "0.011";
+                ci.status = Status.NORMAL;
+
+                result.add(ci);
+            }
+
+            return result;
         }
     }
 
     public static class AnnouncementsFragment extends Fragment {
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_schedule_announcements, containter, false);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_schedule_announcements, container, false);
         }
     }
 
     public static class FriendsFragment extends Fragment {
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_schedule_friends, containter, false);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_schedule_friends, container, false);
         }
     }
 }
