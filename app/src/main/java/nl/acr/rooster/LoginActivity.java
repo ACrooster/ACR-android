@@ -77,9 +77,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Set the school name
-        Framework.SetSchool("amstelveencollege");
     }
 
     @Override
@@ -131,11 +128,24 @@ public class LoginActivity extends AppCompatActivity {
                         showProgress(false);
                         break;
                     }
-                    // TODO: Switch to next activity
-                    // TODO: Make sure the token gets stored somewhere
+
+                    String name = "";
+                    String id = "";
+
+                    Framework.RequestUserData();
+                    // TODO: Add error handling
+                    switch ((int) Framework.GetError()) {
+                        case (int) Framework.ERROR_NONE:
+                            name = Framework.GetName();
+                            id = Framework.GetId();
+                            break;
+                    }
+
                     SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.putString("token", token);
+                    editor.putString("name", name);
+                    editor.putString("id", id);
                     editor.apply();
                     Log.w("Token", token);
                     Intent goToSchedule = new Intent(getApplicationContext(), ScheduleActivity.class);

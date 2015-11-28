@@ -2,10 +2,10 @@
 <resources>
     <color name="colorPrimary">#72A40A</color>
     <color name="colorPrimaryDark">#5C8700</color>
+    <!--TODO: Find better accent color-->
     <color name="colorAccent">#5C8700</color>
-    <color name="colorAnnouncements">#1383df</color>
-    <color name="colorAnnouncementsDark">#0065b7</color>
-    <color name="colorFriends">#df8a13</color>
-    <color name="colorFriendsDark">#be6f00</color>
-    <!--<color name="colorAccent">#D44B1C</color>-->
+    <color name="colorAnnouncements">#2196F3</color>
+    <color name="colorAnnouncementsDark">#1976D2</color>
+    <color name="colorFriends">#F57C00</color>
+    <color name="colorFriendsDark">#e46700</color>
 </resources>

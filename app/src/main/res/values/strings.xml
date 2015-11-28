@@ -18,6 +18,9 @@
     <string name="title_activity_login">Inloggen</string>
     <string name="title_activity_preferences">Instellingen</string>
 
+    <string name="offline">Je bent op dit moment niet online</string>
+    <string name="connect">Verbinden</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
