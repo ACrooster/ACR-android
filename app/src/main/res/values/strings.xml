@@ -30,4 +30,25 @@
     <string name="nav_preferences">Instellingen</string>
     <string name="nav_info">Over</string>
 
+    <!--Weekdays-->
+    <string name="day_mon">Maandag</string>
+    <string name="day_tue">Dinsdag</string>
+    <string name="day_wed">Woensdag</string>
+    <string name="day_thu">Donderdag</string>
+    <string name="day_fri">Vrijdag</string>
+
+    <!--Months-->
+    <string name="month_jan">januari</string>
+    <string name="month_feb">februari</string>
+    <string name="month_mar">maart</string>
+    <string name="month_apr">april</string>
+    <string name="month_may">mei</string>
+    <string name="month_jun">juni</string>
+    <string name="month_jul">juli</string>
+    <string name="month_aug">augustus</string>
+    <string name="month_sep">september</string>
+    <string name="month_oct">oktober</string>
+    <string name="month_nov">november</string>
+    <string name="month_dec">december</string>
+
 </resources>

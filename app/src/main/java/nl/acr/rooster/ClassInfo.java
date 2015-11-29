@@ -10,20 +10,28 @@ public class ClassInfo {
     protected String classRoom;
     protected int status;
 
+    protected long timeStartUnix;
+    protected int timeSlot;
+
     protected String date;
 
-    ClassInfo(String subject, String teacher, String timeStart, String timeEnd, String classRoom, long status) {
+    ClassInfo(String subject, String teacher, String timeStart, String timeEnd, String classRoom, long status, long timeStartUnix, long timeSlot) {
         this.subject = subject;
         this.teacher = teacher;
         this.timeStart = timeStart;
         this.timeEnd = timeEnd;
         this.classRoom = classRoom;
         this.status = (int)status;
+
+        this.timeStartUnix = timeStartUnix;
+        this.timeSlot = (int)timeSlot;
     }
 
-    ClassInfo(String date, int status) {
+    ClassInfo(String date, long timeStartUnix) {
         this.date = date;
-        this.status = status;
+        this.status = (int)Framework.STATUS_DATE;
+
+        this.timeStartUnix = timeStartUnix;
     }
 
     protected int getColor() {
@@ -50,6 +58,9 @@ public class ClassInfo {
             case (int)Framework.STATUS_ACTIVITY:
 //                return 0xffa1e1a1;
                 return 0xffcddc39;
+
+            case (int)Framework.STATUS_EXAM:
+                return 0xff9c27b0;
 
         }
     }
