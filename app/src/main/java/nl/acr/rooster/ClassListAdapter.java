@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import go.framework.Framework;
+
 public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.ClassViewHolder> {
 
     private List<ClassInfo> classInfoList;
@@ -28,7 +30,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
         ClassInfo ci = classInfoList.get(position);
-        if (ci.status == Status.DATE) {
+        if (ci.status == Framework.STATUS_DATE) {
 
             holder.card.setVisibility(View.GONE);
             holder.date.setVisibility(View.VISIBLE);
@@ -46,7 +48,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
             holder.classRoom.setText(ci.classRoom);
             holder.card.setCardBackgroundColor(ci.getColor());
 
-            if (ci.status == Status.FREE) {
+            if (ci.status == Framework.STATUS_FREE) {
                 holder.card.setCardElevation(0);
                 holder.card.setClickable(false);
             } else {
@@ -54,7 +56,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
                 holder.card.setClickable(true);
             }
 
-            if (ci.status == Status.CANCELED) {
+            if (ci.status == Framework.STATUS_CANCELLED) {
                 holder.subject.setPaintFlags(holder.subject.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             } else {
                 holder.subject.setPaintFlags(holder.subject.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));

@@ -42,6 +42,8 @@ import android.content.res.Resources.Theme;
 import java.util.ArrayList;
 import java.util.List;
 
+import go.framework.Framework;
+
 public class ScheduleActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -318,43 +320,60 @@ public class ScheduleActivity extends AppCompatActivity
         private List<ClassInfo> createList() {
             List<ClassInfo> result = new ArrayList<>();
 
-            result.add(new ClassInfo("Maandag 23 november", Status.DATE));
-            result.add(new ClassInfo("Gym", "ENH", "8:30", "9:30", "S.042", Status.NORMAL));
-            result.add(new ClassInfo("Gym", "ENH", "9:30", "10:30", "S.042", Status.NORMAL));
-            result.add(new ClassInfo("Wiskunde B", "BRM & DRO", "10:50", "11:50", "3.045", Status.NORMAL));
-            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
-            result.add(new ClassInfo("Economie", "MER", "13:20", "14:20", "3.040", Status.NORMAL));
+            // TODO: Add more error handling
+            // TODO: Do this in the background
+            Framework.RequestScheduleData();
+            switch ((int) Framework.GetError()) {
+                case (int) Framework.ERROR_NONE:
 
-            result.add(new ClassInfo("Dinsdag 24 november", Status.DATE));
-            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
-            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
-            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
-            result.add(new ClassInfo("Grieks", "NOE", "11:50", "12:50", "3.034", Status.NORMAL));
-            result.add(new ClassInfo("Scheikunde", "VRI", "13:20", "14:20", "0.011", Status.NORMAL));
+                    int classCount = (int) Framework.GetClassCount();
+                    for (int i = 0; i < classCount; i++) {
+                        if (Framework.IsClassValid(i)) {
+                            result.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i)));
+                        }
+                    }
 
-            result.add(new ClassInfo("Woensdag 25 november", Status.DATE));
-            result.add(new ClassInfo("Natuurkunde", "VRI", "8:30", "9:30", "0.011", Status.CANCELED));
-            result.add(new ClassInfo("Wiskunde B", "BRM & DRO", "9:30", "10:30", "3.045", Status.CHANGED));
-            result.add(new ClassInfo("Economie", "MER", "10:50", "11:50", "3.040", Status.NORMAL));
-            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
-            result.add(new ClassInfo("Nederlands", "BCE", "13:20", "14:20", "3.005", Status.CANCELED));
-            result.add(new ClassInfo("Engels", "ENT", "14:20", "15:20", "3.034", Status.NORMAL));
 
-            result.add(new ClassInfo("Donderdag 26 november", Status.DATE));
-            result.add(new ClassInfo("Grieks", "NOE", "8:30", "9:30", "3.042", Status.CANCELED));
-            result.add(new ClassInfo("Herkansing", "", "9:30", "10:30", "", Status.ACTIVITY));
-            result.add(new ClassInfo("Herkansing", "", "10:50", "11:50", "", Status.ACTIVITY));
-            result.add(new ClassInfo("Herkansing", "", "11:50", "12:50", "", Status.ACTIVITY));
-            result.add(new ClassInfo("Informatica", "VBR", "13:20", "14:20", "0.036", Status.NORMAL));
-            result.add(new ClassInfo("Mentoruur", "BCE & STU", "14:20", "15:20", "3038 & 3039", Status.NORMAL));
+                    break;
+            }
 
-            result.add(new ClassInfo("Vrijdag 27 november", Status.DATE));
-            result.add(new ClassInfo("Scheikunde", "VRI", "8:30", "9:30", "0.011", Status.NORMAL));
-            result.add(new ClassInfo("Wiskunde B", "BRM & DRO", "9:30", "10:30", "3.045", Status.NORMAL));
-            result.add(new ClassInfo("Informatica", "VBR", "10:50", "11:50", "0.036", Status.NORMAL));
-            result.add(new ClassInfo("Natuurkunde", "VRI", "11:50", "12:50", "0.011", Status.NORMAL));
-            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
-            result.add(new ClassInfo("Grieks", "NOE", "14:20", "15:20", "3042", Status.NORMAL));
+//            result.add(new ClassInfo("Maandag 23 november", Status.DATE));
+//            result.add(new ClassInfo("Gym", "ENH", "8:30", "9:30", "S.042", Status.NORMAL));
+//            result.add(new ClassInfo("Gym", "ENH", "9:30", "10:30", "S.042", Status.NORMAL));
+//            result.add(new ClassInfo("Wiskunde B", "BRM & DRO", "10:50", "11:50", "3.045", Status.NORMAL));
+//            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
+//            result.add(new ClassInfo("Economie", "MER", "13:20", "14:20", "3.040", Status.NORMAL));
+//
+//            result.add(new ClassInfo("Dinsdag 24 november", Status.DATE));
+//            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
+//            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
+//            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
+//            result.add(new ClassInfo("Grieks", "NOE", "11:50", "12:50", "3.034", Status.NORMAL));
+//            result.add(new ClassInfo("Scheikunde", "VRI", "13:20", "14:20", "0.011", Status.NORMAL));
+//
+//            result.add(new ClassInfo("Woensdag 25 november", Status.DATE));
+//            result.add(new ClassInfo("Natuurkunde", "VRI", "8:30", "9:30", "0.011", Status.CANCELED));
+//            result.add(new ClassInfo("Wiskunde B", "BRM & DRO", "9:30", "10:30", "3.045", Status.CHANGED));
+//            result.add(new ClassInfo("Economie", "MER", "10:50", "11:50", "3.040", Status.NORMAL));
+//            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
+//            result.add(new ClassInfo("Nederlands", "BCE", "13:20", "14:20", "3.005", Status.CANCELED));
+//            result.add(new ClassInfo("Engels", "ENT", "14:20", "15:20", "3.034", Status.NORMAL));
+//
+//            result.add(new ClassInfo("Donderdag 26 november", Status.DATE));
+//            result.add(new ClassInfo("Grieks", "NOE", "8:30", "9:30", "3.042", Status.CANCELED));
+//            result.add(new ClassInfo("Herkansing", "", "9:30", "10:30", "", Status.ACTIVITY));
+//            result.add(new ClassInfo("Herkansing", "", "10:50", "11:50", "", Status.ACTIVITY));
+//            result.add(new ClassInfo("Herkansing", "", "11:50", "12:50", "", Status.ACTIVITY));
+//            result.add(new ClassInfo("Informatica", "VBR", "13:20", "14:20", "0.036", Status.NORMAL));
+//            result.add(new ClassInfo("Mentoruur", "BCE & STU", "14:20", "15:20", "3038 & 3039", Status.NORMAL));
+//
+//            result.add(new ClassInfo("Vrijdag 27 november", Status.DATE));
+//            result.add(new ClassInfo("Scheikunde", "VRI", "8:30", "9:30", "0.011", Status.NORMAL));
+//            result.add(new ClassInfo("Wiskunde B", "BRM & DRO", "9:30", "10:30", "3.045", Status.NORMAL));
+//            result.add(new ClassInfo("Informatica", "VBR", "10:50", "11:50", "0.036", Status.NORMAL));
+//            result.add(new ClassInfo("Natuurkunde", "VRI", "11:50", "12:50", "0.011", Status.NORMAL));
+//            result.add(new ClassInfo("", "", "", "", "", Status.FREE));
+//            result.add(new ClassInfo("Grieks", "NOE", "14:20", "15:20", "3042", Status.NORMAL));
 
             return result;
         }
