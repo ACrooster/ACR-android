@@ -18,11 +18,12 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" >
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/week_spinner"
+
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                android:id="@+id/date_picker_button"
+                style="?android:attr/spinnerStyle"/>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

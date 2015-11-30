@@ -1,21 +1,16 @@
 package nl.acr.rooster;
 
+import android.app.DatePickerDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.transition.Slide;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,15 +25,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.content.res.Resources.Theme;
 
+import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -52,6 +50,28 @@ public class ScheduleActivity extends AppCompatActivity
     static AnnouncementsFragment af = new AnnouncementsFragment();
     static FriendsFragment ff = new FriendsFragment();
 
+    private DatePickerDialog dialog;
+    private Button datePickerButton;
+
+    static private String mon = "";
+    static private String tue = "";
+    static private String wed = "";
+    static private String thu = "";
+    static private String fri = "";
+
+    static private String jan = "";
+    static private String feb = "";
+    static private String mar = "";
+    static private String apr = "";
+    static private String may = "";
+    static private String jun = "";
+    static private String jul = "";
+    static private String aug = "";
+    static private String sep = "";
+    static private String oct = "";
+    static private String nov = "";
+    static private String dec = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,27 +80,6 @@ public class ScheduleActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         assert (getSupportActionBar() != null);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        String weekList[] = new String[53];
-        for (int i = 0; i < weekList.length; i++) {
-            weekList[i] = "Week " + (i + 1);
-        }
-
-        Spinner weekSpinner = (Spinner)findViewById(R.id.week_spinner);
-        weekSpinner.setAdapter(new ScheduleAdapter(toolbar.getContext(), weekList));
-        weekSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                sf.setWeek(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        // TODO: Make this pick the correct week
-        weekSpinner.setSelection(47);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -91,9 +90,6 @@ public class ScheduleActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
-
-        replaceFragment(sf);
-        sf.setWeek(47);
 
         // Sets the name and id in the header bar
         SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
@@ -107,6 +103,52 @@ public class ScheduleActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
+
+        // TODO: Figure out the colors
+        dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                DateFormat dateFormat =  new SimpleDateFormat("yyyyMMdd");
+                try {
+                    int unixTime = (int) (dateFormat.parse(year + "" + (monthOfYear+1) + "" + (dayOfMonth+1)).getTime()/1000);
+                    sf.setWeekUnix(unixTime);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+
+        datePickerButton = (Button)findViewById(R.id.date_picker_button);
+        datePickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.show();
+            }
+        });
+
+        mon = this.getString(R.string.day_mon);
+        tue = this.getString(R.string.day_tue);
+        wed = this.getString(R.string.day_wed);
+        thu = this.getString(R.string.day_thu);
+        fri = this.getString(R.string.day_fri);
+
+        jan = this.getString(R.string.month_jan);
+        feb = this.getString(R.string.month_feb);
+        mar = this.getString(R.string.month_mar);
+        apr = this.getString(R.string.month_apr);
+        may = this.getString(R.string.month_may);
+        jun = this.getString(R.string.month_jun);
+        jul = this.getString(R.string.month_jul);
+        aug = this.getString(R.string.month_aug);
+        sep = this.getString(R.string.month_sep);
+        oct = this.getString(R.string.month_oct);
+        nov = this.getString(R.string.month_nov);
+        dec = this.getString(R.string.month_dec);
+
+        replaceFragment(sf);
+        sf.setWeekUnix(1448918611);
 
         // TODO: Check if the user is online/offline
 //        Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.offline), Snackbar.LENGTH_INDEFINITE)
@@ -151,7 +193,7 @@ public class ScheduleActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        Spinner spinner = (Spinner)findViewById(R.id.week_spinner);
+//        Spinner spinner = (Spinner)findViewById(R.id.week_spinner);
         ActionBar ab = getSupportActionBar();
         Window window = getWindow();
         assert(ab != null);
@@ -164,7 +206,7 @@ public class ScheduleActivity extends AppCompatActivity
                 window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
             }
 
-            spinner.setVisibility(View.VISIBLE);
+            datePickerButton.setVisibility(View.VISIBLE);
             menu.findItem(R.id.search).setVisible(true);
 
             replaceFragment(sf);
@@ -176,7 +218,7 @@ public class ScheduleActivity extends AppCompatActivity
                 window.setStatusBarColor(getResources().getColor(R.color.colorAnnouncementsDark));
             }
 
-            spinner.setVisibility(View.GONE);
+            datePickerButton.setVisibility(View.GONE);
             menu.findItem(R.id.search).setVisible(false);
 
             replaceFragment(af);
@@ -188,7 +230,7 @@ public class ScheduleActivity extends AppCompatActivity
                 window.setStatusBarColor(getResources().getColor(R.color.colorFriendsDark));
             }
 
-            spinner.setVisibility(View.GONE);
+            datePickerButton.setVisibility(View.GONE);
             menu.findItem(R.id.search).setVisible(false);
 
             replaceFragment(ff);
@@ -231,82 +273,18 @@ public class ScheduleActivity extends AppCompatActivity
         return true;
     }
 
-    private static class ScheduleAdapter extends ArrayAdapter<String> implements ThemedSpinnerAdapter {
-        private final ThemedSpinnerAdapter.Helper mDropDownHelper;
-
-        public ScheduleAdapter(Context context, String[] objects) {
-            super(context, android.R.layout.simple_list_item_2, android.R.id.text1, objects);
-            mDropDownHelper = new ThemedSpinnerAdapter.Helper(context);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View view = super.getView(position, convertView, parent);
-            TextView weekView = (TextView) view.findViewById(android.R.id.text1);
-            TextView nameView = (TextView) view.findViewById(android.R.id.text2);
-
-            // TODO: This needs to be done in code
-            weekView.setTypeface(null, Typeface.BOLD);
-            weekView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-            nameView.setText(R.string.title_activity_schedule);
-
-            // TODO: Check if this code also works on other screens
-            Rect weekBounds = new Rect();
-            Rect nameBounds = new Rect();
-            Paint weekPaint = nameView.getPaint();
-            Paint namePaint = weekView.getPaint();
-            weekPaint.getTextBounds(weekView.getText().toString(), 0, weekView.getText().length(), weekBounds);
-            namePaint.getTextBounds(nameView.getText().toString(), 0, nameView.getText().length(), nameBounds);
-            view.getLayoutParams().width = Math.max(nameBounds.width(), weekBounds.width()) + 100;
-
-            return view;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            View view;
-
-            if (convertView == null) {
-                // Inflate the drop down using the helper's LayoutInflater
-                LayoutInflater inflater = mDropDownHelper.getDropDownViewInflater();
-                view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-            } else {
-                view = convertView;
-            }
-
-            TextView textView = (TextView) view.findViewById(android.R.id.text1);
-            textView.setText(getItem(position));
-
-            return view;
-        }
-
-        @Override
-        public Theme getDropDownViewTheme() {
-            return mDropDownHelper.getDropDownViewTheme();
-        }
-
-        @Override
-        public void setDropDownViewTheme(Theme theme) {
-            mDropDownHelper.setDropDownViewTheme(theme);
-        }
-    }
-
     public static class ScheduleFragment extends Fragment {
 
         View rootView;
-        int week;
+        int weekUnix;
 
         List<ClassInfo> classArrayList = new ArrayList<>();
         ClassListAdapter ca = new ClassListAdapter(classArrayList);
 
-        public void setWeek(int week) {
+        public void setWeekUnix(int weekUnix) {
 
-            // TODO: This is just test code
-            if (rootView != null) {
-                this.week = week+1;
-                createList();
-            }
+            this.weekUnix = weekUnix;
+            createList();
         }
 
         @Override
@@ -326,7 +304,7 @@ public class ScheduleActivity extends AppCompatActivity
         private void createList() {
             // TODO: Add more error handling
             // TODO: Do this in the background
-            Framework.RequestScheduleData(2015, week);
+            Framework.RequestScheduleData(weekUnix);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
                     classArrayList.clear();
@@ -382,48 +360,6 @@ public class ScheduleActivity extends AppCompatActivity
                 return (int)(lhs.timeStartUnix - rhs.timeStartUnix);
             }
         };
-
-        private String mon = "";
-        private String tue = "";
-        private String wed = "";
-        private String thu = "";
-        private String fri = "";
-
-        private String jan = "";
-        private String feb = "";
-        private String mar = "";
-        private String apr = "";
-        private String may = "";
-        private String jun = "";
-        private String jul = "";
-        private String aug = "";
-        private String sep = "";
-        private String oct = "";
-        private String nov = "";
-        private String dec = "";
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            mon = this.getString(R.string.day_mon);
-            tue = this.getString(R.string.day_tue);
-            wed = this.getString(R.string.day_wed);
-            thu = this.getString(R.string.day_thu);
-            fri = this.getString(R.string.day_fri);
-
-            jan = this.getString(R.string.month_jan);
-            feb = this.getString(R.string.month_feb);
-            mar = this.getString(R.string.month_mar);
-            apr = this.getString(R.string.month_apr);
-            may = this.getString(R.string.month_may);
-            jun = this.getString(R.string.month_jun);
-            jul = this.getString(R.string.month_jul);
-            aug = this.getString(R.string.month_aug);
-            sep = this.getString(R.string.month_sep);
-            oct = this.getString(R.string.month_oct);
-            nov = this.getString(R.string.month_nov);
-            dec = this.getString(R.string.month_dec);
-        }
 
         // TODO: Check if there is a built in system get this
         public String getDay(int index) {
