@@ -51,4 +51,7 @@
     <string name="month_nov">november</string>
     <string name="month_dec">december</string>
 
+    <!--Crash reporting-->
+    <string name="crash_toast_text">Crash rapport verstuurd</string>
+
 </resources>

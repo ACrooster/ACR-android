@@ -3,17 +3,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Test ding"
-        android:id="@+id/date"
-        android:textSize="24sp"
-        android:textColor="#808080"
-        android:visibility="gone"
-        android:transitionName="testTrans"
-        android:layout_margin="8dp" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/classListMon"
         android:layout_width="match_parent"

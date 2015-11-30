@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -12,6 +11,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import go.framework.Framework;
+
 
 public class StartActivity extends AppCompatActivity {
 

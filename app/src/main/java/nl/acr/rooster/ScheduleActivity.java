@@ -10,13 +10,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ThemedSpinnerAdapter;
 import android.transition.Slide;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -322,48 +320,44 @@ public class ScheduleActivity extends AppCompatActivity
             classList.setLayoutManager(llm);
             classList.setAdapter(ca);
 
-            createList();
-
             return rootView;
         }
 
         private void createList() {
-            List<ClassInfo> tmpList = new ArrayList<>();
-
             // TODO: Add more error handling
             // TODO: Do this in the background
             Framework.RequestScheduleData(2015, week);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
-                    tmpList.clear();
+                    classArrayList.clear();
 
                     int classCount = (int) Framework.GetClassCount();
                     for (int i = 0; i < classCount; i++) {
                         if (Framework.IsClassValid(i)) {
-                            tmpList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
+                            classArrayList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
                         }
                     }
 
-                    Collections.sort(tmpList, classSorter);
+                    Collections.sort(classArrayList, classSorter);
 
                     boolean endOfDay = false;
 
-                    int size = tmpList.size();
+                    int size = classArrayList.size();
                     for (int i = 0; i < size; i++) {
                         int free = 0;
                         if (!endOfDay) {
                             if (i + 1 < size) {
-                                free = tmpList.get(i + 1).timeSlot - tmpList.get(i).timeSlot - 1;
+                                free = classArrayList.get(i + 1).timeSlot - classArrayList.get(i).timeSlot - 1;
                             }
 
                             for (int j = 0; j < free; j++) {
-                                tmpList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tmpList.get(i).timeStartUnix+j+1,tmpList.get(i).timeSlot+j+1));
+                                classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, classArrayList.get(i).timeStartUnix+j+1,classArrayList.get(i).timeSlot+j+1));
                             }
                         } else {
-                            free = tmpList.get(i).timeSlot - 1;
+                            free = classArrayList.get(i).timeSlot - 1;
 
                             for (int j = 0; j < free; j++) {
-                                tmpList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tmpList.get(i).timeStartUnix-j-1,tmpList.get(i).timeSlot-j-1));
+                                classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, classArrayList.get(i).timeStartUnix-j-1,classArrayList.get(i).timeSlot-j-1));
                             }
                         }
 
@@ -372,15 +366,10 @@ public class ScheduleActivity extends AppCompatActivity
                     }
 
                     for (int i = 0; i < 5; i++) {
-                        tmpList.add(new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int)Framework.GetDayMonth(i)), Framework.GetDayUnix(i)));
+                        classArrayList.add(new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int)Framework.GetDayMonth(i)), Framework.GetDayUnix(i)));
                     }
 
-                    Collections.sort(tmpList, classSorter);
-
-                    classArrayList.clear();
-                    for (int i = 0; i < tmpList.size(); i++) {
-                        classArrayList.add(tmpList.get(i));
-                    }
+                    Collections.sort(classArrayList, classSorter);
 
                     ca.notifyDataSetChanged();
                     break;
@@ -394,20 +383,62 @@ public class ScheduleActivity extends AppCompatActivity
             }
         };
 
+        private String mon = "";
+        private String tue = "";
+        private String wed = "";
+        private String thu = "";
+        private String fri = "";
+
+        private String jan = "";
+        private String feb = "";
+        private String mar = "";
+        private String apr = "";
+        private String may = "";
+        private String jun = "";
+        private String jul = "";
+        private String aug = "";
+        private String sep = "";
+        private String oct = "";
+        private String nov = "";
+        private String dec = "";
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            mon = this.getString(R.string.day_mon);
+            tue = this.getString(R.string.day_tue);
+            wed = this.getString(R.string.day_wed);
+            thu = this.getString(R.string.day_thu);
+            fri = this.getString(R.string.day_fri);
+
+            jan = this.getString(R.string.month_jan);
+            feb = this.getString(R.string.month_feb);
+            mar = this.getString(R.string.month_mar);
+            apr = this.getString(R.string.month_apr);
+            may = this.getString(R.string.month_may);
+            jun = this.getString(R.string.month_jun);
+            jul = this.getString(R.string.month_jul);
+            aug = this.getString(R.string.month_aug);
+            sep = this.getString(R.string.month_sep);
+            oct = this.getString(R.string.month_oct);
+            nov = this.getString(R.string.month_nov);
+            dec = this.getString(R.string.month_dec);
+        }
+
         // TODO: Check if there is a built in system get this
         public String getDay(int index) {
 
             switch (index) {
                 case 0:
-                    return getResources().getString(R.string.day_mon);
+                    return mon;
                 case 1:
-                    return getResources().getString(R.string.day_tue);
+                    return tue;
                 case 2:
-                    return getResources().getString(R.string.day_wed);
+                    return wed;
                 case 3:
-                    return getResources().getString(R.string.day_thu);
+                    return thu;
                 case 4:
-                    return getResources().getString(R.string.day_fri);
+                    return fri;
             }
 
             return "";
@@ -418,29 +449,29 @@ public class ScheduleActivity extends AppCompatActivity
 
             switch (index) {
                 case 1:
-                    return getResources().getString(R.string.month_jan);
+                    return jan;
                 case 2:
-                    return getResources().getString(R.string.month_feb);
+                    return feb;
                 case 3:
-                    return getResources().getString(R.string.month_mar);
+                    return mar;
                 case 4:
-                    return getResources().getString(R.string.month_apr);
+                    return apr;
                 case 5:
-                    return getResources().getString(R.string.month_may);
+                    return may;
                 case 6:
-                    return getResources().getString(R.string.month_jun);
+                    return jun;
                 case 7:
-                    return getResources().getString(R.string.month_jul);
+                    return jul;
                 case 8:
-                    return getResources().getString(R.string.month_aug);
+                    return aug;
                 case 9:
-                    return getResources().getString(R.string.month_sep);
+                    return sep;
                 case 10:
-                    return getResources().getString(R.string.month_oct);
+                    return oct;
                 case 11:
-                    return getResources().getString(R.string.month_nov);
+                    return nov;
                 case 12:
-                    return getResources().getString(R.string.month_dec);
+                    return dec;
             }
 
             return "";

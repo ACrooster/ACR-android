@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
     <item name="ic_announcements" type="drawable">@drawable/ic_announcements_legacy</item>
     <item name="ic_friends" type="drawable">@drawable/ic_friends_legacy</item>
     <item name="ic_info" type="drawable">@drawable/ic_info_legacy</item>
