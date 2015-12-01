@@ -25,7 +25,6 @@ android {
     defaultConfig {
         applicationId "nl.amstelveencollege.rooster"
         minSdkVersion 17
-        targetSdkVersion 23
         versionCode getVersionCode()
         versionName getVersionName()
     }
