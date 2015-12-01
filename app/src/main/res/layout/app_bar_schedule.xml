@@ -19,11 +19,32 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" >
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/date_picker_button"
-                style="?android:attr/spinnerStyle"/>
+                android:orientation="vertical"
+                style="@style/Widget.AppCompat.Spinner"
+                android:paddingRight="32dp"
+                android:paddingLeft="8dp" >
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/date_picker_week"
+                    tools:text="Week XX"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#ffffff" />
+
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/date_picker_student"
+                    tools:text="Leerling met een lange naam"
+                    />
+
+                </LinearLayout>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

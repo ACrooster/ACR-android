@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Slide;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,7 +27,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -49,7 +50,9 @@ public class ScheduleActivity extends AppCompatActivity
     static FriendsFragment ff = new FriendsFragment();
 
     private DatePickerDialog dialog;
-    private Button datePickerButton;
+    private LinearLayout datePickerButton;
+    private TextView datePickerWeek;
+    private TextView datePickerStudent;
 
     static private String mon = "";
     static private String tue = "";
@@ -102,7 +105,9 @@ public class ScheduleActivity extends AppCompatActivity
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        datePickerButton = (Button)findViewById(R.id.date_picker_button);
+        datePickerButton = (LinearLayout)findViewById(R.id.date_picker_button);
+        datePickerWeek = (TextView)findViewById(R.id.date_picker_week);
+        datePickerStudent = (TextView)findViewById(R.id.date_picker_student);
         datePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,9 +123,11 @@ public class ScheduleActivity extends AppCompatActivity
 
                 DateFormat dateFormat =  new SimpleDateFormat("yyyyMMdd");
                 try {
-                    int unixTime = (int) (dateFormat.parse(year + "" + (monthOfYear+1) + "" + dayOfMonth).getTime()/1000);
+                    int unixTime = (int) (dateFormat.parse(year + "" + (monthOfYear+1) + "" + (dayOfMonth+1)).getTime()/1000);
                     sf.setWeekUnix(unixTime);
-                    datePickerButton.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
+                    datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
+                    // TODO: Add system that checks whose schedule you are looking add
+                    datePickerStudent.setText("Mijn rooster");
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -148,7 +155,8 @@ public class ScheduleActivity extends AppCompatActivity
 
         replaceFragment(sf);
         sf.setWeekUnix(1448918611);
-        datePickerButton.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
+        datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
+        datePickerStudent.setText("Mijn rooster");
 
         // TODO: Check if the user is online/offline
 //        Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.offline), Snackbar.LENGTH_INDEFINITE)

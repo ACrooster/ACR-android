@@ -168,6 +168,10 @@ public class LoginActivity extends AppCompatActivity {
                     imm.showSoftInput(codeText, InputMethodManager.SHOW_IMPLICIT);
                     break;
 
+                default:
+                    textView.setText("Er gaat iets mis");
+                    break;
+
             }
 
             // If the login was unsuccessful display the login screen again
