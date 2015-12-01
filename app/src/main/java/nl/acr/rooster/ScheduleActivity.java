@@ -30,8 +30,6 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -104,21 +102,6 @@ public class ScheduleActivity extends AppCompatActivity
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        // TODO: Figure out the colors
-        dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                DateFormat dateFormat =  new SimpleDateFormat("yyyyMMdd");
-                try {
-                    int unixTime = (int) (dateFormat.parse(year + "" + (monthOfYear+1) + "" + (dayOfMonth+1)).getTime()/1000);
-                    sf.setWeekUnix(unixTime);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-
         datePickerButton = (Button)findViewById(R.id.date_picker_button);
         datePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +110,22 @@ public class ScheduleActivity extends AppCompatActivity
                 dialog.show();
             }
         });
+
+        // TODO: Figure out the colors
+        dialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                DateFormat dateFormat =  new SimpleDateFormat("yyyyMMdd");
+                try {
+                    int unixTime = (int) (dateFormat.parse(year + "" + (monthOfYear+1) + "" + dayOfMonth).getTime()/1000);
+                    sf.setWeekUnix(unixTime);
+                    datePickerButton.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 
         mon = this.getString(R.string.day_mon);
         tue = this.getString(R.string.day_tue);
@@ -149,6 +148,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         replaceFragment(sf);
         sf.setWeekUnix(1448918611);
+        datePickerButton.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
 
         // TODO: Check if the user is online/offline
 //        Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.offline), Snackbar.LENGTH_INDEFINITE)

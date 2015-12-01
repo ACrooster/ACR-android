@@ -37,6 +37,8 @@
     <string name="day_thu">Donderdag</string>
     <string name="day_fri">Vrijdag</string>
 
+    <string name="week">Week</string>
+
     <!--Months-->
     <string name="month_jan">januari</string>
     <string name="month_feb">februari</string>
