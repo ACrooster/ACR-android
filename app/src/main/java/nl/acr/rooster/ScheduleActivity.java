@@ -7,10 +7,12 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Slide;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,6 +53,7 @@ public class ScheduleActivity extends AppCompatActivity
     private LinearLayout datePickerButton;
     private TextView datePickerWeek;
     private TextView datePickerStudent;
+    static private SwipeRefreshLayout refreshSchedule;
 
     static private String mon = "";
     static private String tue = "";
@@ -70,6 +73,8 @@ public class ScheduleActivity extends AppCompatActivity
     static private String oct = "";
     static private String nov = "";
     static private String dec = "";
+
+    static private int timeOfLastUpdate = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +112,7 @@ public class ScheduleActivity extends AppCompatActivity
         datePickerWeek = (TextView)findViewById(R.id.date_picker_week);
         datePickerStudent = (TextView)findViewById(R.id.date_picker_student);
         datePickerButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
@@ -152,7 +158,7 @@ public class ScheduleActivity extends AppCompatActivity
         dec = this.getString(R.string.month_dec);
 
         replaceFragment(sf);
-        sf.setWeekUnix(1448918611);
+        sf.setWeekUnix((int) (System.currentTimeMillis()/1000));
         datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
         datePickerStudent.setText("Mijn rooster");
 
@@ -166,6 +172,19 @@ public class ScheduleActivity extends AppCompatActivity
 //                    }
 //                })
 //                .show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // NOTE: Never update more than once every ten seconds
+        if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 10) {
+            if (refreshSchedule != null) {
+                refreshSchedule.setRefreshing(true);
+            }
+            sf.createList();
+        }
     }
 
     @Override
@@ -304,12 +323,25 @@ public class ScheduleActivity extends AppCompatActivity
             classList.setLayoutManager(llm);
             classList.setAdapter(ca);
 
+            refreshSchedule = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_schedule);
+            refreshSchedule.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+                @Override
+                public void onRefresh() {
+
+                    Log.w("Rooster", "Resuming");
+                    sf.createList();
+                }
+            });
+
+
             return rootView;
         }
 
         private void createList() {
             // TODO: Add more error handling
             // TODO: Do this in the background
+            Log.w("ping", "pong");
             Framework.RequestScheduleData(weekUnix);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
@@ -359,6 +391,10 @@ public class ScheduleActivity extends AppCompatActivity
 
                     ca.notifyDataSetChanged();
                     break;
+            }
+            timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
+            if (refreshSchedule != null) {
+                refreshSchedule.setRefreshing(false);
             }
         }
 
