@@ -119,9 +119,9 @@ public class ScheduleActivity extends AppCompatActivity
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                DateFormat dateFormat =  new SimpleDateFormat("yyyyMMdd");
+                DateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
                 try {
-                    int unixTime = (int) (dateFormat.parse(year + "" + (monthOfYear+1) + "" + (dayOfMonth+1)).getTime()/1000);
+                    int unixTime = (int) (dateFormat.parse(year + "-" + (monthOfYear+1) + "-" + (dayOfMonth+1)).getTime()/1000);
                     sf.setWeekUnix(unixTime);
                     datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
                     // TODO: Add system that checks whose schedule you are looking add
@@ -328,21 +328,23 @@ public class ScheduleActivity extends AppCompatActivity
 
                     int size = classArrayList.size();
                     for (int i = 0; i < size; i++) {
-                        int free = 0;
-                        if (!endOfDay) {
-                            if (i + 1 < size) {
-                                free = classArrayList.get(i + 1).timeSlot - classArrayList.get(i).timeSlot - 1;
-                            }
-
-                            for (int j = 0; j < free; j++) {
-                                classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, classArrayList.get(i).timeStartUnix+j+1,classArrayList.get(i).timeSlot+j+1));
-                            }
-                        } else {
+                        int free;
+                        if (i == 0 || endOfDay) {
                             free = classArrayList.get(i).timeSlot - 1;
 
                             for (int j = 0; j < free; j++) {
                                 classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, classArrayList.get(i).timeStartUnix-j-1,classArrayList.get(i).timeSlot-j-1));
                             }
+                        }
+
+                        if (i + 1 < size) {
+                            free = classArrayList.get(i + 1).timeSlot - classArrayList.get(i).timeSlot - 1;
+                        } else {
+                            free = 0;
+                        }
+
+                        for (int j = 0; j < free; j++) {
+                            classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, classArrayList.get(i).timeStartUnix+j+1,classArrayList.get(i).timeSlot+j+1));
                         }
 
                         endOfDay = free<0;
