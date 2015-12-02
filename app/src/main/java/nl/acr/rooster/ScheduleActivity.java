@@ -57,6 +57,7 @@ public class ScheduleActivity extends AppCompatActivity
     static private TextView datePickerWeek;
     static private TextView datePickerStudent;
     static private DrawerLayout drawer;
+    static public NavigationView navigationView;
     static private SwipeRefreshLayout refreshSchedule;
     static private ProgressBar progressBar;
 
@@ -96,7 +97,7 @@ public class ScheduleActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
@@ -170,7 +171,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         // NOTE: Never update more than once every ten seconds
         if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 10) {
-//            sf.createList();
+            sf.createList();
         }
     }
 
@@ -218,6 +219,7 @@ public class ScheduleActivity extends AppCompatActivity
                 window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
             }
 
+            ScheduleFragment.user = Framework.MY_SCHEDULE;
             datePickerButton.setVisibility(View.VISIBLE);
             menu.findItem(R.id.search).setVisible(true);
 
@@ -290,6 +292,8 @@ public class ScheduleActivity extends AppCompatActivity
         private View rootView;
         static private int weekUnix;
 
+        static public String user = Framework.MY_SCHEDULE;
+
         static private List<ClassInfo> classArrayList = new ArrayList<>();
         static private ClassListAdapter ca = new ClassListAdapter(classArrayList);
 
@@ -311,23 +315,22 @@ public class ScheduleActivity extends AppCompatActivity
             classList.setAdapter(ca);
 
             refreshSchedule = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_schedule);
+            refreshSchedule.setColorSchemeResources(R.color.colorPrimary);
             refreshSchedule.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
                 @Override
                 public void onRefresh() {
 
-                    sf.createList();
+                    createList();
                 }
             });
 
-            sf.setWeekUnix((int) (System.currentTimeMillis()/1000));
-            datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
-            datePickerStudent.setText("Mijn rooster");
+            sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
 
             return rootView;
         }
 
-        private void createList() {
+        public static void createList() {
             // TODO: Add more error handling
             // TODO: Do this in the background
 
@@ -363,8 +366,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Log.w("ping", "pong");
-            Framework.RequestScheduleData(ScheduleFragment.weekUnix);
+            Framework.RequestScheduleData(ScheduleFragment.weekUnix, ScheduleFragment.user);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
 
@@ -394,16 +396,15 @@ public class ScheduleActivity extends AppCompatActivity
 
                         if (i + 1 < size) {
                             free = ScheduleFragment.classArrayList.get(i + 1).timeSlot - ScheduleFragment.classArrayList.get(i).timeSlot - 1;
+                            endOfDay = (ScheduleFragment.classArrayList.get(i + 1).timeStartUnix - ScheduleFragment.classArrayList.get(i).timeStartUnix) > 10*3600;
                         } else {
                             free = 0;
+                            endOfDay = false;
                         }
 
                         for (int j = 0; j < free; j++) {
                             ScheduleFragment.classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, ScheduleFragment.classArrayList.get(i).timeStartUnix+j+1,ScheduleFragment.classArrayList.get(i).timeSlot+j+1));
                         }
-
-                        endOfDay = free<0;
-
                     }
 
                     for (int i = 0; i < 5; i++) {
@@ -429,7 +430,7 @@ public class ScheduleActivity extends AppCompatActivity
                     // TODO: This should use strings.xml
                     datePickerWeek.setText("Week " + Framework.GetWeek());
                     // TODO: Add system that checks whose schedule you are looking at
-                    datePickerStudent.setText("Mijn rooster");
+                    datePickerStudent.setText(Framework.GetUser());
                 }
             } else {
                 Snackbar.make(drawer, "Je bent op dit moment offline", Snackbar.LENGTH_INDEFINITE)

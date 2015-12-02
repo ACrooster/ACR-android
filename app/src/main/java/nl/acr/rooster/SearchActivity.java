@@ -2,12 +2,14 @@ package nl.acr.rooster;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Intent;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +24,15 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         assert(getSupportActionBar() != null);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            Log.w("Search", query);
+            ScheduleActivity.ScheduleFragment.user = query;
+            ScheduleActivity.ScheduleFragment.createList();
+            ScheduleActivity.navigationView.getMenu().getItem(0).setChecked(false);
+        }
     }
 
     Activity search = this;
