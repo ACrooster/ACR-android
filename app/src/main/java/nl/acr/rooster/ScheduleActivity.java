@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,8 +52,9 @@ public class ScheduleActivity extends AppCompatActivity
 
     private DatePickerDialog dialog;
     private LinearLayout datePickerButton;
-    private TextView datePickerWeek;
-    private TextView datePickerStudent;
+    static private TextView datePickerWeek;
+    static private TextView datePickerStudent;
+    static private DrawerLayout drawer;
     static private SwipeRefreshLayout refreshSchedule;
 
     static private String mon = "";
@@ -85,7 +87,7 @@ public class ScheduleActivity extends AppCompatActivity
         assert (getSupportActionBar() != null);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -129,9 +131,6 @@ public class ScheduleActivity extends AppCompatActivity
                 try {
                     int unixTime = (int) (dateFormat.parse(year + "-" + (monthOfYear+1) + "-" + (dayOfMonth+1)).getTime()/1000);
                     sf.setWeekUnix(unixTime);
-                    datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
-                    // TODO: Add system that checks whose schedule you are looking add
-                    datePickerStudent.setText("Mijn rooster");
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -161,17 +160,6 @@ public class ScheduleActivity extends AppCompatActivity
         sf.setWeekUnix((int) (System.currentTimeMillis()/1000));
         datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
         datePickerStudent.setText("Mijn rooster");
-
-        // TODO: Check if the user is online/offline
-//        Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.offline), Snackbar.LENGTH_INDEFINITE)
-//                .setAction(getResources().getString(R.string.connect), new View.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        Log.w("Connect", "Trying to reconnect");
-//                    }
-//                })
-//                .show();
     }
 
     @Override
@@ -345,6 +333,14 @@ public class ScheduleActivity extends AppCompatActivity
             Framework.RequestScheduleData(weekUnix);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
+
+                    if (datePickerWeek != null && datePickerStudent != null && getActivity() != null) {
+                        // TODO: This should go in a function
+                        datePickerWeek.setText(getActivity().getString(R.string.week) + " " + Framework.GetWeek());
+                        // TODO: Add system that checks whose schedule you are looking at
+                        datePickerStudent.setText("Mijn rooster");
+                    }
+
                     classArrayList.clear();
 
                     int classCount = (int) Framework.GetClassCount();
@@ -390,6 +386,23 @@ public class ScheduleActivity extends AppCompatActivity
                     Collections.sort(classArrayList, classSorter);
 
                     ca.notifyDataSetChanged();
+                    break;
+
+                case (int) Framework.ERROR_CONNECTION:
+                    Snackbar.make(drawer, getResources().getString(R.string.offline), Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
+
+                                @Override
+                                public void onClick(View v) {
+                                    Log.w("Connect", "Trying to reconnect");
+                                    // TODO: This needs to move into a function
+                                    if (refreshSchedule != null) {
+                                        refreshSchedule.setRefreshing(true);
+                                    }
+                                    sf.createList();
+                                }
+                            })
+                            .show();
                     break;
             }
             timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
