@@ -5,9 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".PreferencesActivity"
     tools:showIn="@layout/activity_preferences" >
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_marginTop="64dp" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/schedule_fragment_container"

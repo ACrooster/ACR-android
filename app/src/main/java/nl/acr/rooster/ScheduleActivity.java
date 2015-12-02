@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -30,6 +31,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -51,11 +53,12 @@ public class ScheduleActivity extends AppCompatActivity
     static FriendsFragment ff = new FriendsFragment();
 
     private DatePickerDialog dialog;
-    private LinearLayout datePickerButton;
+    static private LinearLayout datePickerButton;
     static private TextView datePickerWeek;
     static private TextView datePickerStudent;
     static private DrawerLayout drawer;
     static private SwipeRefreshLayout refreshSchedule;
+    static private ProgressBar progressBar;
 
     static private String mon = "";
     static private String tue = "";
@@ -110,6 +113,8 @@ public class ScheduleActivity extends AppCompatActivity
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
 
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+
         datePickerButton = (LinearLayout)findViewById(R.id.date_picker_button);
         datePickerWeek = (TextView)findViewById(R.id.date_picker_week);
         datePickerStudent = (TextView)findViewById(R.id.date_picker_student);
@@ -157,9 +162,6 @@ public class ScheduleActivity extends AppCompatActivity
         dec = this.getString(R.string.month_dec);
 
         replaceFragment(sf);
-        sf.setWeekUnix((int) (System.currentTimeMillis()/1000));
-        datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
-        datePickerStudent.setText("Mijn rooster");
     }
 
     @Override
@@ -168,10 +170,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         // NOTE: Never update more than once every ten seconds
         if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 10) {
-            if (refreshSchedule != null) {
-                refreshSchedule.setRefreshing(true);
-            }
-            sf.createList();
+//            sf.createList();
         }
     }
 
@@ -288,15 +287,15 @@ public class ScheduleActivity extends AppCompatActivity
 
     public static class ScheduleFragment extends Fragment {
 
-        View rootView;
-        int weekUnix;
+        private View rootView;
+        static private int weekUnix;
 
-        List<ClassInfo> classArrayList = new ArrayList<>();
-        ClassListAdapter ca = new ClassListAdapter(classArrayList);
+        static private List<ClassInfo> classArrayList = new ArrayList<>();
+        static private ClassListAdapter ca = new ClassListAdapter(classArrayList);
 
         public void setWeekUnix(int weekUnix) {
 
-            this.weekUnix = weekUnix;
+            ScheduleFragment.weekUnix = weekUnix;
             createList();
         }
 
@@ -317,11 +316,13 @@ public class ScheduleActivity extends AppCompatActivity
                 @Override
                 public void onRefresh() {
 
-                    Log.w("Rooster", "Resuming");
                     sf.createList();
                 }
             });
 
+            sf.setWeekUnix((int) (System.currentTimeMillis()/1000));
+            datePickerWeek.setText(getResources().getString(R.string.week) + " " + Framework.GetWeek());
+            datePickerStudent.setText("Mijn rooster");
 
             return rootView;
         }
@@ -329,50 +330,76 @@ public class ScheduleActivity extends AppCompatActivity
         private void createList() {
             // TODO: Add more error handling
             // TODO: Do this in the background
+
+            UpdateSchedule updateSchedule = new UpdateSchedule();
+            updateSchedule.execute((Void) null);
+        }
+
+    }
+
+    public static class AnnouncementsFragment extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_schedule_announcements, container, false);
+        }
+    }
+
+    public static class FriendsFragment extends Fragment {
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_schedule_friends, container, false);
+        }
+    }
+
+    public static class UpdateSchedule extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+
+            refreshSchedule.setRefreshing(true);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
             Log.w("ping", "pong");
-            Framework.RequestScheduleData(weekUnix);
+            Framework.RequestScheduleData(ScheduleFragment.weekUnix);
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
 
-                    if (datePickerWeek != null && datePickerStudent != null && getActivity() != null) {
-                        // TODO: This should go in a function
-                        datePickerWeek.setText(getActivity().getString(R.string.week) + " " + Framework.GetWeek());
-                        // TODO: Add system that checks whose schedule you are looking at
-                        datePickerStudent.setText("Mijn rooster");
-                    }
-
-                    classArrayList.clear();
+                    ScheduleFragment.classArrayList.clear();
 
                     int classCount = (int) Framework.GetClassCount();
                     for (int i = 0; i < classCount; i++) {
                         if (Framework.IsClassValid(i)) {
-                            classArrayList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
+                            ScheduleFragment.classArrayList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
                         }
                     }
 
-                    Collections.sort(classArrayList, classSorter);
+                    Collections.sort(ScheduleFragment.classArrayList, classSorter);
 
                     boolean endOfDay = false;
 
-                    int size = classArrayList.size();
+                    int size = ScheduleFragment.classArrayList.size();
                     for (int i = 0; i < size; i++) {
                         int free;
                         if (i == 0 || endOfDay) {
-                            free = classArrayList.get(i).timeSlot - 1;
+                            free = ScheduleFragment.classArrayList.get(i).timeSlot - 1;
 
                             for (int j = 0; j < free; j++) {
-                                classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, classArrayList.get(i).timeStartUnix-j-1,classArrayList.get(i).timeSlot-j-1));
+                                ScheduleFragment.classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, ScheduleFragment.classArrayList.get(i).timeStartUnix - j - 1, ScheduleFragment.classArrayList.get(i).timeSlot - j - 1));
                             }
                         }
 
                         if (i + 1 < size) {
-                            free = classArrayList.get(i + 1).timeSlot - classArrayList.get(i).timeSlot - 1;
+                            free = ScheduleFragment.classArrayList.get(i + 1).timeSlot - ScheduleFragment.classArrayList.get(i).timeSlot - 1;
                         } else {
                             free = 0;
                         }
 
                         for (int j = 0; j < free; j++) {
-                            classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, classArrayList.get(i).timeStartUnix+j+1,classArrayList.get(i).timeSlot+j+1));
+                            ScheduleFragment.classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, ScheduleFragment.classArrayList.get(i).timeStartUnix+j+1,ScheduleFragment.classArrayList.get(i).timeSlot+j+1));
                         }
 
                         endOfDay = free<0;
@@ -380,35 +407,44 @@ public class ScheduleActivity extends AppCompatActivity
                     }
 
                     for (int i = 0; i < 5; i++) {
-                        classArrayList.add(new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int)Framework.GetDayMonth(i)), Framework.GetDayUnix(i)));
+                        ScheduleFragment.classArrayList.add(new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int)Framework.GetDayMonth(i)), Framework.GetDayUnix(i)));
                     }
 
-                    Collections.sort(classArrayList, classSorter);
+                    Collections.sort(ScheduleFragment.classArrayList, classSorter);
 
-                    ca.notifyDataSetChanged();
-                    break;
+                    timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
+                    return true;
 
-                case (int) Framework.ERROR_CONNECTION:
-                    Snackbar.make(drawer, getResources().getString(R.string.offline), Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getResources().getString(R.string.retry), new View.OnClickListener() {
-
-                                @Override
-                                public void onClick(View v) {
-                                    Log.w("Connect", "Trying to reconnect");
-                                    // TODO: This needs to move into a function
-                                    if (refreshSchedule != null) {
-                                        refreshSchedule.setRefreshing(true);
-                                    }
-                                    sf.createList();
-                                }
-                            })
-                            .show();
-                    break;
             }
-            timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
-            if (refreshSchedule != null) {
-                refreshSchedule.setRefreshing(false);
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+
+            if (success) {
+                ScheduleFragment.ca.notifyDataSetChanged();
+                if (datePickerWeek != null && datePickerStudent != null) {
+                    // TODO: This should go in a function
+                    // TODO: This should use strings.xml
+                    datePickerWeek.setText("Week " + Framework.GetWeek());
+                    // TODO: Add system that checks whose schedule you are looking at
+                    datePickerStudent.setText("Mijn rooster");
+                }
+            } else {
+                Snackbar.make(drawer, "Je bent op dit moment offline", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Opnieuw proberen", new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                sf.createList();
+                            }
+                        })
+                        .show();
             }
+
+            progressBar.setVisibility(View.GONE);
+            refreshSchedule.setRefreshing(false);
         }
 
         Comparator<ClassInfo> classSorter = new Comparator<ClassInfo>() {
@@ -418,7 +454,7 @@ public class ScheduleActivity extends AppCompatActivity
             }
         };
 
-        // TODO: Check if there is a built in system get this
+            // TODO: Check if there is a built in system get this
         public String getDay(int index) {
 
             switch (index) {
@@ -469,21 +505,6 @@ public class ScheduleActivity extends AppCompatActivity
 
             return "";
         }
-    }
 
-    public static class AnnouncementsFragment extends Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_schedule_announcements, container, false);
-        }
-    }
-
-    public static class FriendsFragment extends Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_schedule_friends, container, false);
-        }
     }
 }
