@@ -30,6 +30,23 @@
     <string name="nav_preferences">Instellingen</string>
     <string name="nav_info">Over</string>
 
+    <!--About-->
+    <string name="about">Over</string>
+    <string name="about_text">
+        Dit is een onofficiële rooster app voor het Amstelveen College. \n\n
+        Ontwerp: \n
+        Bas Hünneman \n
+        Mats Bulterman \n\n
+        Markt onderzoek: \n
+        Gert Hartzema \n
+        Xavier van Dommelen \n\n
+        Framework: \n
+        Auke Scheepstra \n
+        Tim Huizinga \n\n
+        App: \n
+        Tim Huizinga
+    </string>
+
     <!--Weekdays-->
     <string name="day_mon">Maandag</string>
     <string name="day_tue">Dinsdag</string>

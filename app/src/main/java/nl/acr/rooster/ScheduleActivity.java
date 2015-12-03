@@ -1,5 +1,6 @@
 package nl.acr.rooster;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.content.Intent;
@@ -254,6 +255,11 @@ public class ScheduleActivity extends AppCompatActivity
             startActivity(goToPreferences);
         } else if (id == R.id.nav_info) {
 
+            AlertDialog.Builder about = new AlertDialog.Builder(this, R.style.DialogAlertTheme);
+            about.setTitle(R.string.about);
+            about.setMessage(R.string.about_text);
+            about.setPositiveButton("OK", null);
+            about.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

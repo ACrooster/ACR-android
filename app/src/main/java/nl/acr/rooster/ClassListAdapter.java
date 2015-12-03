@@ -29,37 +29,39 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
 
     @Override
     public void onBindViewHolder(ClassViewHolder holder, int position) {
-        ClassInfo ci = classInfoList.get(position);
-        if (ci.status == Framework.STATUS_DATE) {
+        if (position < classInfoList.size()) {
+            ClassInfo ci = classInfoList.get(position);
+            if (ci.status == Framework.STATUS_DATE) {
 
-            holder.card.setVisibility(View.GONE);
-            holder.date.setVisibility(View.VISIBLE);
+                holder.card.setVisibility(View.GONE);
+                holder.date.setVisibility(View.VISIBLE);
 
-            holder.date.setText(ci.date);
+                holder.date.setText(ci.date);
 
-        } else {
-            holder.card.setVisibility(View.VISIBLE);
-            holder.date.setVisibility(View.GONE);
-
-            holder.subject.setText(ci.subject);
-            holder.teacher.setText(ci.teacher);
-            holder.timeStart.setText(ci.timeStart);
-            holder.timeEnd.setText(ci.timeEnd);
-            holder.classRoom.setText(ci.classRoom);
-            holder.card.setCardBackgroundColor(ci.getColor());
-
-            if (ci.status == Framework.STATUS_FREE) {
-                holder.card.setCardElevation(0);
-                holder.card.setClickable(false);
             } else {
-                holder.card.setCardElevation(4);
-                holder.card.setClickable(true);
-            }
+                holder.card.setVisibility(View.VISIBLE);
+                holder.date.setVisibility(View.GONE);
 
-            if (ci.status == Framework.STATUS_CANCELLED) {
-                holder.subject.setPaintFlags(holder.subject.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            } else {
-                holder.subject.setPaintFlags(holder.subject.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                holder.subject.setText(ci.subject);
+                holder.teacher.setText(ci.teacher);
+                holder.timeStart.setText(ci.timeStart);
+                holder.timeEnd.setText(ci.timeEnd);
+                holder.classRoom.setText(ci.classRoom);
+                holder.card.setCardBackgroundColor(ci.getColor());
+
+                if (ci.status == Framework.STATUS_FREE) {
+                    holder.card.setCardElevation(0);
+                    holder.card.setClickable(false);
+                } else {
+                    holder.card.setCardElevation(4);
+                    holder.card.setClickable(true);
+                }
+
+                if (ci.status == Framework.STATUS_CANCELLED) {
+                    holder.subject.setPaintFlags(holder.subject.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    holder.subject.setPaintFlags(holder.subject.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
             }
         }
     }
