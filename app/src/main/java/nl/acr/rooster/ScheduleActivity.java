@@ -13,11 +13,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.transition.Slide;
@@ -48,9 +46,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import go.framework.Framework;
+
+import static nl.acr.rooster.ScheduleActivity.ScheduleFragment.classList;
+import static nl.acr.rooster.ScheduleActivity.ScheduleFragment.createList;
 
 public class ScheduleActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,6 +70,7 @@ public class ScheduleActivity extends AppCompatActivity
     static private SwipeRefreshLayout refreshSchedule;
     static private ProgressBar progressBar;
 
+    // TODO: Make these arrays
     static private String mon = "";
     static private String tue = "";
     static private String wed = "";
@@ -87,7 +90,10 @@ public class ScheduleActivity extends AppCompatActivity
     static private String nov = "";
     static private String dec = "";
 
+    static private boolean scroll = true;
+    static private int[] datePosition = new int[5];
     static private int timeOfLastUpdate = 0;
+    static private int dayOfWeek = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +141,9 @@ public class ScheduleActivity extends AppCompatActivity
             }
         });
 
+        Calendar c = Calendar.getInstance();
+        dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+
         // TODO: Figure out the colors
         dialog = new DatePickerDialog(this, R.style.DialogTheme ,new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -142,9 +151,17 @@ public class ScheduleActivity extends AppCompatActivity
 
                 DateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
                 try {
-                    int unixTime = (int) (dateFormat.parse(year + "-" + (monthOfYear+1) + "-" + (dayOfMonth+1)).getTime()/1000);
+                    Date date = dateFormat.parse(year + "-" + (monthOfYear+1) + "-" + (dayOfMonth+1));
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(date);
+                    dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 3;
+                    if (dayOfWeek < 0) {
+                        dayOfWeek = 0;
+                    }
+                    int unixTime = (int) (date.getTime()/1000);
                     sf.setWeekUnix(unixTime);
-                    ScheduleFragment.createList();
+                    scroll = true;
+                    createList();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -177,13 +194,15 @@ public class ScheduleActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            if (menu.findItem(R.id.search).isActionViewExpanded()) {
-                menu.findItem(R.id.search).collapseActionView();
+            if (menu.findItem(R.id.menu_search).isActionViewExpanded()) {
+                menu.findItem(R.id.menu_search).collapseActionView();
             }
             Log.w("Search", query);
 
+            navigationView.getMenu().getItem(0).setChecked(false);
             ScheduleFragment.user = query;
-            ScheduleFragment.createList();
+            scroll = true;
+            createList();
         }
     }
 
@@ -193,7 +212,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         // NOTE: Never update more than once every ten seconds
         if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 10) {
-            ScheduleFragment.createList();
+            createList();
         }
     }
 
@@ -220,6 +239,8 @@ public class ScheduleActivity extends AppCompatActivity
         Window window = getWindow();
         assert(ab != null);
 
+        progressBar.setVisibility(View.GONE);
+
         if (id == R.id.nav_schedule) {
             ab.setDisplayShowTitleEnabled(false);
             ab.setTitle(R.string.title_activity_schedule);
@@ -229,8 +250,16 @@ public class ScheduleActivity extends AppCompatActivity
             }
 
             ScheduleFragment.user = Framework.MY_SCHEDULE;
+            Calendar c = Calendar.getInstance();
+            dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+            sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
+            scroll = true;
+            createList();
             datePickerButton.setVisibility(View.VISIBLE);
-            menu.findItem(R.id.search).setVisible(true);
+            menu.findItem(R.id.menu_search).setVisible(true);
+
+            navigationView.getMenu().getItem(0).setChecked(true);
+            progressBar.setVisibility(View.VISIBLE);
 
             replaceFragment(sf);
         } else if (id == R.id.nav_announcements) {
@@ -242,7 +271,7 @@ public class ScheduleActivity extends AppCompatActivity
             }
 
             datePickerButton.setVisibility(View.GONE);
-            menu.findItem(R.id.search).setVisible(false);
+            menu.findItem(R.id.menu_search).setVisible(false);
 
             replaceFragment(af);
         } else if (id == R.id.nav_friends) {
@@ -254,7 +283,7 @@ public class ScheduleActivity extends AppCompatActivity
             }
 
             datePickerButton.setVisibility(View.GONE);
-            menu.findItem(R.id.search).setVisible(false);
+            menu.findItem(R.id.menu_search).setVisible(false);
 
             replaceFragment(ff);
         } else if (id == R.id.nav_preferences) {
@@ -310,9 +339,27 @@ public class ScheduleActivity extends AppCompatActivity
 
         this.menu = menu;
 
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menu_refresh) {
+            scroll = true;
+            createList();
+        } else if (id == R.id.menu_today) {
+            Calendar c = Calendar.getInstance();
+            dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+            sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
+            scroll = true;
+            createList();
+            dialog.updateDate(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        }
 
         return true;
     }
@@ -324,6 +371,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         static public String user = Framework.MY_SCHEDULE;
 
+        static protected RecyclerView classList;
         static private List<ClassInfo> classArrayList = new ArrayList<>();
         static private ClassListAdapter ca = new ClassListAdapter(classArrayList);
 
@@ -337,23 +385,27 @@ public class ScheduleActivity extends AppCompatActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
             rootView =  inflater.inflate(R.layout.fragment_schedule, containter, false);
 
-            RecyclerView classList = (RecyclerView) rootView.findViewById(R.id.classListMon);
+            classList = (RecyclerView) rootView.findViewById(R.id.classListMon);
             classList.setHasFixedSize(true);
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-            llm.setOrientation(LinearLayout.VERTICAL);
-            classList.setLayoutManager(llm);
+            classList.setLayoutManager(new LinearLayoutManagerWithSmoothScroller(getActivity()));
             classList.setAdapter(ca);
 
             refreshSchedule = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_schedule);
-            refreshSchedule.setColorSchemeResources(R.color.colorPrimary);
+            refreshSchedule.setColorSchemeResources(R.color.colorPrimaryDark);
             refreshSchedule.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
                 @Override
                 public void onRefresh() {
 
+                    scroll = true;
                     createList();
                 }
             });
+
+            if (classArrayList.size() == 0) {
+                progressBar.setVisibility(View.VISIBLE);
+                classList.setVisibility(View.GONE);
+            }
 
             sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
 
@@ -436,16 +488,23 @@ public class ScheduleActivity extends AppCompatActivity
                         }
                     }
 
+                    ClassInfo[] dateInfo = new ClassInfo[5];
                     for (int i = 0; i < 5; i++) {
-                        tempList.add(new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i)));
+                        dateInfo[i] = new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
+                        tempList.add(dateInfo[i]);
                     }
 
                     Collections.sort(tempList, classSorter);
+
+                    for (int i = 0; i < 5; i++) {
+                        datePosition[i] = tempList.indexOf(dateInfo[i]);
+                    }
 
                     timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
 
                     ScheduleFragment.classArrayList.clear();
                     ScheduleFragment.classArrayList.addAll(tempList);
+
                     return true;
 
             }
@@ -463,6 +522,13 @@ public class ScheduleActivity extends AppCompatActivity
                     datePickerWeek.setText("Week " + Framework.GetWeek());
                     // TODO: Add system that checks whose schedule you are looking at
                     datePickerStudent.setText(Framework.GetUser());
+
+                    int position = datePosition[dayOfWeek];
+                    if (scroll && ScheduleFragment.classArrayList.size() > position) {
+                        Log.w("Scroll", "Scrolling to: " + position);
+                        ScheduleFragment.classList.smoothScrollToPosition(position);
+                        scroll = false;
+                    }
                 }
             } else {
                 Snackbar.make(drawer, "Je bent op dit moment offline", Snackbar.LENGTH_INDEFINITE)
@@ -470,13 +536,14 @@ public class ScheduleActivity extends AppCompatActivity
 
                             @Override
                             public void onClick(View v) {
-                                ScheduleFragment.createList();
+                                createList();
                             }
                         })
                         .show();
             }
 
             progressBar.setVisibility(View.GONE);
+            classList.setVisibility(View.VISIBLE);
             refreshSchedule.setRefreshing(false);
         }
 

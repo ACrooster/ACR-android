@@ -26,6 +26,8 @@
 
     <string name="search_title">Zoeken</string>
     <string name="search_hint">Zoeken naar andere roosters</string>
+    <string name="refresh_title">Vernieuwen</string>
+    <string name="today_title">Vandaag</string>
 
     <string name="nav_preferences">Instellingen</string>
     <string name="nav_info">Over</string>
