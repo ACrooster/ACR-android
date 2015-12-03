@@ -44,8 +44,11 @@
         Auke Scheepstra \n
         Tim Huizinga \n\n
         App: \n
-        Tim Huizinga
+        Tim Huizinga\n\n
     </string>
+    <string name="ok">OK</string>
+    <string name="contact">Contact</string>
+    <string name="send">Bericht verzenden</string>
 
     <!--Weekdays-->
     <string name="day_mon">Maandag</string>

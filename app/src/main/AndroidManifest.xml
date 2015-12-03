@@ -31,6 +31,12 @@
             android:label="@string/title_activity_schedule"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".PreferencesActivity"
@@ -41,22 +47,5 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ScheduleActivity" />
         </activity>
-        <activity
-            android:name=".SearchActivity"
-            android:label="@string/title_activity_search"
-            android:parentActivityName=".ScheduleActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ScheduleActivity" />
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"
-                android:value=".SearchActivity" />
-        </activity>
     </application>
-
 </manifest>

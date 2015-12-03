@@ -3,17 +3,23 @@ package nl.acr.rooster;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
@@ -167,6 +173,20 @@ public class ScheduleActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            if (menu.findItem(R.id.search).isActionViewExpanded()) {
+                menu.findItem(R.id.search).collapseActionView();
+            }
+            Log.w("Search", query);
+
+            ScheduleFragment.user = query;
+            ScheduleFragment.createList();
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -184,19 +204,6 @@ public class ScheduleActivity extends AppCompatActivity
         } else {
             moveTaskToBack(true);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.search) {
-            Intent goToSearch = new Intent(getApplicationContext(), SearchActivity.class);
-            startActivity(goToSearch);
-        }
-
-        return true;
     }
 
     // TODO: Move some off this stuff into seperate functions
@@ -258,7 +265,19 @@ public class ScheduleActivity extends AppCompatActivity
             AlertDialog.Builder about = new AlertDialog.Builder(this, R.style.DialogAlertTheme);
             about.setTitle(R.string.about);
             about.setMessage(R.string.about_text);
-            about.setPositiveButton("OK", null);
+            about.setPositiveButton(R.string.ok, null);
+            about.setNegativeButton(R.string.contact, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Uri uri = Uri.parse("mailto:amstelveencollegerooster@gmail.com")
+                            .buildUpon()
+                            .build();
+
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+
+                    startActivity(Intent.createChooser(intent, getString(R.string.send)));
+                }
+            });
             about.show();
         }
 
@@ -289,6 +308,10 @@ public class ScheduleActivity extends AppCompatActivity
         inflater.inflate(R.menu.schedule_menu, menu);
 
         this.menu = menu;
+
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         return true;
     }
