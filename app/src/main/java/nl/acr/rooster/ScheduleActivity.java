@@ -396,53 +396,55 @@ public class ScheduleActivity extends AppCompatActivity
         @Override
         protected Boolean doInBackground(Void... params) {
             Framework.RequestScheduleData(ScheduleFragment.weekUnix, ScheduleFragment.user);
+            List<ClassInfo> tempList = new ArrayList<>();
             switch ((int) Framework.GetError()) {
                 case (int) Framework.ERROR_NONE:
-
-                    ScheduleFragment.classArrayList.clear();
 
                     int classCount = (int) Framework.GetClassCount();
                     for (int i = 0; i < classCount; i++) {
                         if (Framework.IsClassValid(i)) {
-                            ScheduleFragment.classArrayList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
+                            tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
                         }
                     }
 
-                    Collections.sort(ScheduleFragment.classArrayList, classSorter);
+                    Collections.sort(tempList, classSorter);
 
                     boolean endOfDay = false;
 
-                    int size = ScheduleFragment.classArrayList.size();
+                    int size = tempList.size();
                     for (int i = 0; i < size; i++) {
                         int free;
                         if (i == 0 || endOfDay) {
-                            free = ScheduleFragment.classArrayList.get(i).timeSlot - 1;
+                            free = tempList.get(i).timeSlot - 1;
 
                             for (int j = 0; j < free; j++) {
-                                ScheduleFragment.classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, ScheduleFragment.classArrayList.get(i).timeStartUnix - j - 1, ScheduleFragment.classArrayList.get(i).timeSlot - j - 1));
+                                tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
                             }
                         }
 
                         if (i + 1 < size) {
-                            free = ScheduleFragment.classArrayList.get(i + 1).timeSlot - ScheduleFragment.classArrayList.get(i).timeSlot - 1;
-                            endOfDay = (ScheduleFragment.classArrayList.get(i + 1).timeStartUnix - ScheduleFragment.classArrayList.get(i).timeStartUnix) > 10*3600;
+                            free = tempList.get(i + 1).timeSlot - tempList.get(i).timeSlot - 1;
+                            endOfDay = (tempList.get(i + 1).timeStartUnix - tempList.get(i).timeStartUnix) > 10*3600;
                         } else {
                             free = 0;
                             endOfDay = false;
                         }
 
                         for (int j = 0; j < free; j++) {
-                            ScheduleFragment.classArrayList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, ScheduleFragment.classArrayList.get(i).timeStartUnix+j+1,ScheduleFragment.classArrayList.get(i).timeSlot+j+1));
+                            tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix+j+1,tempList.get(i).timeSlot+j+1));
                         }
                     }
 
                     for (int i = 0; i < 5; i++) {
-                        ScheduleFragment.classArrayList.add(new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int)Framework.GetDayMonth(i)), Framework.GetDayUnix(i)));
+                        tempList.add(new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i)));
                     }
 
-                    Collections.sort(ScheduleFragment.classArrayList, classSorter);
+                    Collections.sort(tempList, classSorter);
 
                     timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
+
+                    ScheduleFragment.classArrayList.clear();
+                    ScheduleFragment.classArrayList.addAll(tempList);
                     return true;
 
             }
@@ -467,7 +469,7 @@ public class ScheduleActivity extends AppCompatActivity
 
                             @Override
                             public void onClick(View v) {
-                                sf.createList();
+                                ScheduleFragment.createList();
                             }
                         })
                         .show();
