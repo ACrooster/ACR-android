@@ -144,6 +144,7 @@ public class ScheduleActivity extends AppCompatActivity
                 try {
                     int unixTime = (int) (dateFormat.parse(year + "-" + (monthOfYear+1) + "-" + (dayOfMonth+1)).getTime()/1000);
                     sf.setWeekUnix(unixTime);
+                    ScheduleFragment.createList();
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -192,7 +193,7 @@ public class ScheduleActivity extends AppCompatActivity
 
         // NOTE: Never update more than once every ten seconds
         if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 10) {
-            sf.createList();
+            ScheduleFragment.createList();
         }
     }
 
@@ -329,7 +330,7 @@ public class ScheduleActivity extends AppCompatActivity
         public void setWeekUnix(int weekUnix) {
 
             ScheduleFragment.weekUnix = weekUnix;
-            createList();
+//            createList();
         }
 
         @Override
