@@ -10,6 +10,8 @@
     <string name="code_invalid">Deze code is ongeldig</string>
     <string name="code_invalid_length">De code bestaat uit 12 cijfers</string>
 
+    <string name="login_help">Ga naar amstelveencollege.zportal.nl, log daar in en kies vervolgens in de rode balk de onderste optie. Klik daarna op "Koppel App". Er verschijnt nu een code in beeld, deze moet hierboven eenmalig ingevoerd worden.</string>
+
     <string name="title_activity_schedule">Mijn rooster</string>
     <string name="title_activity_schedule_announcements">Mededelingen</string>
     <string name="title_activity_schedule_friends">Vrienden</string>
