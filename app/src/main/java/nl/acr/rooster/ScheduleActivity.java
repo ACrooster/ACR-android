@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -39,6 +40,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.DateFormat;
@@ -279,22 +282,24 @@ public class ScheduleActivity extends AppCompatActivity
             startActivity(goToPreferences);
         } else if (id == R.id.nav_info) {
 
-            AlertDialog.Builder about = new AlertDialog.Builder(this, R.style.DialogAlertTheme);
-            about.setTitle(R.string.about);
-            about.setMessage(R.string.about_text);
-            about.setPositiveButton(R.string.ok, null);
-            about.setNegativeButton(R.string.contact, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Uri uri = Uri.parse("mailto:amstelveencollegerooster@gmail.com")
-                            .buildUpon()
-                            .build();
+            MaterialDialog.Builder about = new MaterialDialog.Builder(this)
+                    .title(R.string.about)
+                    .content(R.string.about_text)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.contact)
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
 
-                    Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                            Uri uri = Uri.parse("mailto:amstelveencollegerooster@gmail.com")
+                                    .buildUpon()
+                                    .build();
 
-                    startActivity(Intent.createChooser(intent, getString(R.string.send)));
-                }
-            });
+                            Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+
+                            startActivity(Intent.createChooser(intent, getString(R.string.send)));
+                        }
+                    });
             about.show();
         }
 
