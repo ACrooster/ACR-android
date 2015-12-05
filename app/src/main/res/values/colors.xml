@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#72A40A</color>
-    <color name="colorPrimaryDark">#5C8700</color>
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
     <!--TODO: Find better accent color-->
-    <color name="colorAccent">#5C8700</color>
+    <color name="colorAccent">#FFC107</color>
     <color name="colorAnnouncements">#2196F3</color>
     <color name="colorAnnouncementsDark">#1976D2</color>
     <color name="colorFriends">#F57C00</color>

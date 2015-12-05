@@ -1,12 +1,13 @@
 package nl.acr.rooster;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -34,10 +35,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -137,7 +139,7 @@ public class ScheduleActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                dialog.show();
+                dialog.show(getFragmentManager(), "DatePickerDialog");
             }
         });
 
@@ -145,25 +147,7 @@ public class ScheduleActivity extends AppCompatActivity
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
 
         // TODO: Figure out the colors
-        dialog = new DatePickerDialog(this, R.style.DialogTheme ,new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-                DateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd");
-                try {
-                    Date date = dateFormat.parse(year + "-" + (monthOfYear+1) + "-" + (dayOfMonth+1));
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(date);
-                    dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 3;
-                    int unixTime = (int) (date.getTime()/1000);
-                    sf.setWeekUnix(unixTime);
-                    scroll = true;
-                    createList();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        dialog = DatePickerDialog.newInstance(new DayPicker(), Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 
         mon = this.getString(R.string.day_mon);
         tue = this.getString(R.string.day_tue);
@@ -208,7 +192,13 @@ public class ScheduleActivity extends AppCompatActivity
         super.onResume();
 
         // NOTE: Never update more than once every ten seconds
-        if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 10) {
+        if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 120) {
+            // TODO: Move this into a function
+            Calendar c = Calendar.getInstance();
+            dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+            sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
+            scroll = true;
+            dialog = DatePickerDialog.newInstance(new DayPicker(), Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
             createList();
         }
     }
@@ -347,7 +337,6 @@ public class ScheduleActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.menu_refresh) {
-            scroll = true;
             createList();
         } else if (id == R.id.menu_today) {
             Calendar c = Calendar.getInstance();
@@ -355,7 +344,7 @@ public class ScheduleActivity extends AppCompatActivity
             sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
             scroll = true;
             createList();
-            dialog.updateDate(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+            dialog = DatePickerDialog.newInstance(new DayPicker(), Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
         }
 
         return true;
@@ -375,7 +364,6 @@ public class ScheduleActivity extends AppCompatActivity
         public void setWeekUnix(int weekUnix) {
 
             ScheduleFragment.weekUnix = weekUnix;
-//            createList();
         }
 
         @Override
@@ -388,13 +376,12 @@ public class ScheduleActivity extends AppCompatActivity
             classList.setAdapter(ca);
 
             refreshSchedule = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_schedule);
-            refreshSchedule.setColorSchemeResources(R.color.colorPrimaryDark);
+            refreshSchedule.setColorSchemeResources(R.color.colorAccent);
             refreshSchedule.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
                 @Override
                 public void onRefresh() {
 
-                    scroll = true;
                     createList();
                 }
             });
@@ -609,5 +596,24 @@ public class ScheduleActivity extends AppCompatActivity
             return "";
         }
 
+    }
+
+    private class DayPicker implements DatePickerDialog.OnDateSetListener {
+        @Override
+        public void onDateSet(DatePickerDialog view,int year,int monthOfYear,int dayOfMonth){
+            DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+            try{
+                Date date=dateFormat.parse(year+"-"+(monthOfYear+1)+"-"+(dayOfMonth+1));
+                Calendar c=Calendar.getInstance();
+                c.setTime(date);
+                dayOfWeek=c.get(Calendar.DAY_OF_WEEK)-3;
+                int unixTime=(int)(date.getTime()/1000);
+                sf.setWeekUnix(unixTime);
+                scroll=true;
+                createList();
+            }catch(ParseException e){
+                e.printStackTrace();
+            }
+        }
     }
 }
