@@ -124,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
                 case (int) Framework.ERROR_NONE:
                     if (token == null) {
                         // NOTE: This should never ever happen, but just in case
-                        Log.e("Token", "Received null token");
                         showProgress(false);
                         break;
                     }
@@ -147,7 +146,6 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("name", name);
                     editor.putString("id", id);
                     editor.apply();
-                    Log.w("Token", token);
                     Intent goToSchedule = new Intent(getApplicationContext(), ScheduleActivity.class);
                     startActivity(goToSchedule);
                     break;

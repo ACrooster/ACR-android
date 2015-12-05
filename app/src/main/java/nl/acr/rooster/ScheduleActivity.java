@@ -155,9 +155,6 @@ public class ScheduleActivity extends AppCompatActivity
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
                     dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 3;
-                    if (dayOfWeek < 0) {
-                        dayOfWeek = 0;
-                    }
                     int unixTime = (int) (date.getTime()/1000);
                     sf.setWeekUnix(unixTime);
                     scroll = true;
@@ -523,6 +520,12 @@ public class ScheduleActivity extends AppCompatActivity
                     // TODO: Add system that checks whose schedule you are looking at
                     datePickerStudent.setText(Framework.GetUser());
 
+                    if (dayOfWeek < 0) {
+                        dayOfWeek = 0;
+                    }
+                    if (dayOfWeek >= 5) {
+                        dayOfWeek = 4;
+                    }
                     int position = datePosition[dayOfWeek];
                     if (scroll && ScheduleFragment.classArrayList.size() > position) {
                         Log.w("Scroll", "Scrolling to: " + position);
