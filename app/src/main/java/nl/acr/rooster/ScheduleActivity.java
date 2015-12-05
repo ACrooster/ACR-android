@@ -75,6 +75,8 @@ public class ScheduleActivity extends AppCompatActivity
     static private SwipeRefreshLayout refreshSchedule;
     static private ProgressBar progressBar;
 
+    static private Calendar cal;
+
     // TODO: Make these arrays
     static private String mon = "";
     static private String tue = "";
@@ -146,11 +148,13 @@ public class ScheduleActivity extends AppCompatActivity
             }
         });
 
-        Calendar c = Calendar.getInstance();
-        dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+        cal = Calendar.getInstance();
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
 
         // TODO: Figure out the colors
-        dialog = DatePickerDialog.newInstance(new DayPicker(), Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+        dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        dialog.vibrate(false);
 
         mon = this.getString(R.string.day_mon);
         tue = this.getString(R.string.day_tue);
@@ -172,6 +176,23 @@ public class ScheduleActivity extends AppCompatActivity
         dec = this.getString(R.string.month_dec);
 
         replaceFragment(sf);
+    }
+
+    public int toDayNumber(int day) {
+        switch (day) {
+            case Calendar.MONDAY:
+                return 0;
+            case Calendar.TUESDAY:
+                return 1;
+            case Calendar.WEDNESDAY:
+                return 2;
+            case Calendar.THURSDAY:
+                return 3;
+            case Calendar.FRIDAY:
+                return 4;
+            default:
+                return 0;
+        }
     }
 
     @Override
@@ -197,11 +218,10 @@ public class ScheduleActivity extends AppCompatActivity
         // NOTE: Never update more than once every ten seconds
         if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 120) {
             // TODO: Move this into a function
-            Calendar c = Calendar.getInstance();
-            dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+            dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
             sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
             scroll = true;
-            dialog = DatePickerDialog.newInstance(new DayPicker(), Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+            dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
             createList();
         }
     }
@@ -240,8 +260,7 @@ public class ScheduleActivity extends AppCompatActivity
             }
 
             ScheduleFragment.user = Framework.MY_SCHEDULE;
-            Calendar c = Calendar.getInstance();
-            dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+            dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
             sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
             scroll = true;
             createList();
@@ -344,12 +363,11 @@ public class ScheduleActivity extends AppCompatActivity
         if (id == R.id.menu_refresh) {
             createList();
         } else if (id == R.id.menu_today) {
-            Calendar c = Calendar.getInstance();
-            dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 2;
+            dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
             sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
             scroll = true;
             createList();
-            dialog = DatePickerDialog.newInstance(new DayPicker(), Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+            dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         }
 
         return true;
@@ -512,12 +530,6 @@ public class ScheduleActivity extends AppCompatActivity
                     // TODO: Add system that checks whose schedule you are looking at
                     datePickerStudent.setText(Framework.GetUser());
 
-                    if (dayOfWeek < 0) {
-                        dayOfWeek = 0;
-                    }
-                    if (dayOfWeek >= 5) {
-                        dayOfWeek = 4;
-                    }
                     int position = datePosition[dayOfWeek];
                     if (scroll && ScheduleFragment.classArrayList.size() > position) {
                         Log.w("Scroll", "Scrolling to: " + position);
@@ -608,13 +620,12 @@ public class ScheduleActivity extends AppCompatActivity
         public void onDateSet(DatePickerDialog view,int year,int monthOfYear,int dayOfMonth){
             DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
             try{
-                Date date=dateFormat.parse(year+"-"+(monthOfYear+1)+"-"+(dayOfMonth+1));
-                Calendar c=Calendar.getInstance();
-                c.setTime(date);
-                dayOfWeek=c.get(Calendar.DAY_OF_WEEK)-3;
-                int unixTime=(int)(date.getTime()/1000);
+                Date date=dateFormat.parse(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                cal.setTime(date);
+                dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
+                int unixTime = (int)(date.getTime()/1000 + 3600);
                 sf.setWeekUnix(unixTime);
-                scroll=true;
+                scroll = true;
                 createList();
             }catch(ParseException e){
                 e.printStackTrace();
