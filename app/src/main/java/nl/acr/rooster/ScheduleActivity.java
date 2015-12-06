@@ -1,13 +1,10 @@
 package nl.acr.rooster;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.SearchManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.transition.Slide;
@@ -98,6 +96,7 @@ public class ScheduleActivity extends AppCompatActivity
     static private String dec = "";
 
     static private boolean scroll = true;
+    static private boolean landscape = false;
     static private int[] datePosition = new int[5];
     static private int timeOfLastUpdate = 0;
     static private int dayOfWeek = 0;
@@ -395,8 +394,17 @@ public class ScheduleActivity extends AppCompatActivity
 
             classList = (RecyclerView) rootView.findViewById(R.id.classListMon);
             classList.setHasFixedSize(true);
-            classList.setLayoutManager(new LinearLayoutManagerWithSmoothScroller(getActivity()));
-            classList.setAdapter(ca);
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                classList.setLayoutManager(new LinearLayoutManagerWithSmoothScroller(getActivity()));
+                classList.setAdapter(ca);
+                landscape = false;
+            } else {
+                classList.setHasFixedSize(true);
+                GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 5);
+                classList.setLayoutManager(layoutManager);
+                classList.setAdapter(ca);
+                landscape = true;
+            }
 
             refreshSchedule = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_schedule);
             refreshSchedule.setColorSchemeResources(R.color.colorAccent);
@@ -416,6 +424,8 @@ public class ScheduleActivity extends AppCompatActivity
 
             sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
 
+            createList();
+
             return rootView;
         }
 
@@ -424,7 +434,7 @@ public class ScheduleActivity extends AppCompatActivity
             // TODO: Do this in the background
 
             UpdateSchedule updateSchedule = new UpdateSchedule();
-            updateSchedule.execute((Void) null);
+            updateSchedule.execute(landscape);
         }
 
     }
@@ -445,7 +455,7 @@ public class ScheduleActivity extends AppCompatActivity
         }
     }
 
-    public static class UpdateSchedule extends AsyncTask<Void, Void, Boolean> {
+    public static class UpdateSchedule extends AsyncTask<Boolean, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -454,7 +464,7 @@ public class ScheduleActivity extends AppCompatActivity
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(Boolean... params) {
             Framework.RequestScheduleData(ScheduleFragment.weekUnix, ScheduleFragment.user);
             List<ClassInfo> tempList = new ArrayList<>();
             switch ((int) Framework.GetError()) {
@@ -497,20 +507,45 @@ public class ScheduleActivity extends AppCompatActivity
 
                     ClassInfo[] dateInfo = new ClassInfo[5];
                     for (int i = 0; i < 5; i++) {
-                        dateInfo[i] = new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
+//                        dateInfo[i] = new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
+                        dateInfo[i] = new ClassInfo(getDay(i), Framework.GetDayUnix(i));
                         tempList.add(dateInfo[i]);
                     }
-
                     Collections.sort(tempList, classSorter);
-
                     for (int i = 0; i < 5; i++) {
                         datePosition[i] = tempList.indexOf(dateInfo[i]);
+                    }
+
+                    List<ClassInfo> landscapeList = new ArrayList<>();
+                    if (params[0]) {
+                        size = tempList.size();
+                        for (int i = 0; i < size * 5; i++) {
+                            landscapeList.add(new ClassInfo());
+                        }
+
+                        int day = 0;
+                        int offset = 0;
+                        for (int i = 0; i < size; i++) {
+                            landscapeList.set((i - offset) * 5 + day, tempList.get(i));
+                            if (day != 4) {
+                                if (i + 1 == datePosition[day + 1]) {
+                                    day++;
+                                    offset = i + 1;
+                                }
+                            }
+                        }
                     }
 
                     timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
 
                     ScheduleFragment.classArrayList.clear();
-                    ScheduleFragment.classArrayList.addAll(tempList);
+                    if (params[0]) {
+                        Log.w("LANDSCAPE", "TRUE");
+                        ScheduleFragment.classArrayList.addAll(landscapeList);
+                    } else {
+                        Log.w("LANDSCAPE", "FALSE");
+                        ScheduleFragment.classArrayList.addAll(tempList);
+                    }
 
                     return true;
 

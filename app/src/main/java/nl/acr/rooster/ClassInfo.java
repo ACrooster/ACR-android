@@ -34,6 +34,10 @@ public class ClassInfo {
         this.timeStartUnix = timeStartUnix;
     }
 
+    ClassInfo() {
+        this.status = (int)Framework.STATUS_EMPTY;
+    }
+
     protected int getColor() {
 
         // TODO: Move this into color.xml

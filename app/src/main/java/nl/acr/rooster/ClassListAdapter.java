@@ -32,12 +32,13 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
         if (position < classInfoList.size()) {
             ClassInfo ci = classInfoList.get(position);
             if (ci.status == Framework.STATUS_DATE) {
-
                 holder.card.setVisibility(View.GONE);
                 holder.date.setVisibility(View.VISIBLE);
 
                 holder.date.setText(ci.date);
-
+            } else if(ci.status == Framework.STATUS_EMPTY) {
+                holder.card.setVisibility(View.GONE);
+                holder.date.setVisibility(View.GONE);
             } else {
                 holder.card.setVisibility(View.VISIBLE);
                 holder.date.setVisibility(View.GONE);
