@@ -517,9 +517,20 @@ public class ScheduleActivity extends AppCompatActivity
                     }
 
                     List<ClassInfo> landscapeList = new ArrayList<>();
+
                     if (params[0]) {
                         size = tempList.size();
-                        for (int i = 0; i < size * 5; i++) {
+                        int longest = 0;
+
+                        for (int i = 0; i < 5; i++) {
+                            if (i != 4) {
+                                longest = Math.max(datePosition[i+1]-datePosition[i], longest);
+                            } else {
+                                longest = Math.max(size-1-datePosition[i], longest);
+                            }
+                        }
+
+                        for (int i = 0; i < longest * 5; i++) {
                             landscapeList.add(new ClassInfo());
                         }
 
@@ -540,10 +551,8 @@ public class ScheduleActivity extends AppCompatActivity
 
                     ScheduleFragment.classArrayList.clear();
                     if (params[0]) {
-                        Log.w("LANDSCAPE", "TRUE");
                         ScheduleFragment.classArrayList.addAll(landscapeList);
                     } else {
-                        Log.w("LANDSCAPE", "FALSE");
                         ScheduleFragment.classArrayList.addAll(tempList);
                     }
 
