@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import go.framework.Framework;
 
 public class LoginActivity extends AppCompatActivity {
@@ -77,6 +79,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // TODO: Login using the zermelo OAuth page
+//        Intent intent = getIntent();
+//        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+//        }
     }
 
     @Override
