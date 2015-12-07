@@ -526,7 +526,7 @@ public class ScheduleActivity extends AppCompatActivity
                             if (i != 4) {
                                 longest = Math.max(datePosition[i+1]-datePosition[i], longest);
                             } else {
-                                longest = Math.max(size-1-datePosition[i], longest);
+                                longest = Math.max(size-datePosition[i], longest);
                             }
                         }
 
