@@ -5,7 +5,6 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -100,6 +99,7 @@ public class ScheduleActivity extends AppCompatActivity
     static private int[] datePosition = new int[5];
     static private int timeOfLastUpdate = 0;
     static private int dayOfWeek = 0;
+    static private MaterialDialog.Builder rights;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,9 +129,9 @@ public class ScheduleActivity extends AppCompatActivity
         id.setText(settings.getString("id", ""));
 
         // TODO: Find a better way that keeps transparency
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+//        }
 
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
@@ -175,6 +175,11 @@ public class ScheduleActivity extends AppCompatActivity
         dec = this.getString(R.string.month_dec);
 
         replaceFragment(sf);
+
+         rights = new MaterialDialog.Builder(this)
+                .title(R.string.rights)
+                .content(R.string.rights_text)
+                .positiveText(R.string.ok);
     }
 
     public int toDayNumber(int day) {
@@ -214,14 +219,10 @@ public class ScheduleActivity extends AppCompatActivity
     public void onResume() {
         super.onResume();
 
-        // NOTE: Never update more than once every ten seconds
+        // NOTE: Never update more than once every two minutes
         if (((System.currentTimeMillis()/1000) - timeOfLastUpdate) > 120) {
-            // TODO: Move this into a function
-            dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
-            sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
-            scroll = true;
-            dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-            createList();
+            goToday();
+            Log.w("Resume", "Resuming");
         }
     }
 
@@ -253,10 +254,10 @@ public class ScheduleActivity extends AppCompatActivity
         if (id == R.id.nav_schedule) {
             ab.setDisplayShowTitleEnabled(false);
             ab.setTitle(R.string.title_activity_schedule);
-            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-            }
+//            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+//            }
 
             ScheduleFragment.user = Framework.MY_SCHEDULE;
             dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
@@ -273,10 +274,10 @@ public class ScheduleActivity extends AppCompatActivity
         } else if (id == R.id.nav_announcements) {
             ab.setDisplayShowTitleEnabled(true);
             ab.setTitle(R.string.title_activity_schedule_announcements);
-            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorAnnouncements)));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                window.setStatusBarColor(getResources().getColor(R.color.colorAnnouncementsDark));
-            }
+//            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorAnnouncements)));
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                window.setStatusBarColor(getResources().getColor(R.color.colorAnnouncementsDark));
+//            }
 
             datePickerButton.setVisibility(View.GONE);
             menu.findItem(R.id.menu_search).setVisible(false);
@@ -284,11 +285,11 @@ public class ScheduleActivity extends AppCompatActivity
             replaceFragment(af);
         } else if (id == R.id.nav_friends) {
             ab.setDisplayShowTitleEnabled(true);
-            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorFriends)));
+//            ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorFriends)));
             ab.setTitle(R.string.title_activity_schedule_friends);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                window.setStatusBarColor(getResources().getColor(R.color.colorFriendsDark));
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                window.setStatusBarColor(getResources().getColor(R.color.colorFriendsDark));
+//            }
 
             datePickerButton.setVisibility(View.GONE);
             menu.findItem(R.id.menu_search).setVisible(false);
@@ -362,20 +363,25 @@ public class ScheduleActivity extends AppCompatActivity
         if (id == R.id.menu_refresh) {
             createList();
         } else if (id == R.id.menu_today) {
-            dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
-            sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
-            scroll = true;
-            createList();
-            dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+            goToday();
         }
 
         return true;
     }
 
+    public void goToday() {
+        cal.setTime(new Date(System.currentTimeMillis()));
+        dayOfWeek = toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
+        sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
+        scroll = true;
+        createList();
+        dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+    }
+
     public static class ScheduleFragment extends Fragment {
 
         private View rootView;
-        static private int weekUnix;
+        static private int weekUnix = 0;
 
         static public String user = Framework.MY_SCHEDULE;
 
@@ -386,6 +392,7 @@ public class ScheduleActivity extends AppCompatActivity
         public void setWeekUnix(int weekUnix) {
 
             ScheduleFragment.weekUnix = weekUnix;
+            Log.w("Week", String.valueOf(weekUnix));
         }
 
         @Override
@@ -422,7 +429,9 @@ public class ScheduleActivity extends AppCompatActivity
                 classList.setVisibility(View.GONE);
             }
 
-            sf.setWeekUnix((int) (System.currentTimeMillis() / 1000));
+            if (weekUnix == 0) {
+                setWeekUnix((int) (System.currentTimeMillis() / 1000));
+            }
 
             createList();
 
@@ -455,7 +464,7 @@ public class ScheduleActivity extends AppCompatActivity
         }
     }
 
-    public static class UpdateSchedule extends AsyncTask<Boolean, Void, Boolean> {
+    public static class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
         @Override
         protected void onPreExecute() {
@@ -464,108 +473,105 @@ public class ScheduleActivity extends AppCompatActivity
         }
 
         @Override
-        protected Boolean doInBackground(Boolean... params) {
+        protected Integer doInBackground(Boolean... params) {
             Framework.RequestScheduleData(ScheduleFragment.weekUnix, ScheduleFragment.user);
             List<ClassInfo> tempList = new ArrayList<>();
-            switch ((int) Framework.GetError()) {
-                case (int) Framework.ERROR_NONE:
+            int error = (int) Framework.GetError();
+            if (error == Framework.ERROR_NONE) {
 
-                    int classCount = (int) Framework.GetClassCount();
-                    for (int i = 0; i < classCount; i++) {
-                        if (Framework.IsClassValid(i)) {
-                            tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
-                        }
+                int classCount = (int) Framework.GetClassCount();
+                for (int i = 0; i < classCount; i++) {
+                    if (Framework.IsClassValid(i)) {
+                        tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
                     }
+                }
 
-                    Collections.sort(tempList, classSorter);
+                Collections.sort(tempList, classSorter);
 
-                    boolean endOfDay = false;
+                boolean endOfDay = false;
 
-                    int size = tempList.size();
-                    for (int i = 0; i < size; i++) {
-                        int free;
-                        if (i == 0 || endOfDay) {
-                            free = tempList.get(i).timeSlot - 1;
-
-                            for (int j = 0; j < free; j++) {
-                                tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
-                            }
-                        }
-
-                        if (i + 1 < size) {
-                            free = tempList.get(i + 1).timeSlot - tempList.get(i).timeSlot - 1;
-                            endOfDay = (tempList.get(i + 1).timeStartUnix - tempList.get(i).timeStartUnix) > 10*3600;
-                        } else {
-                            free = 0;
-                            endOfDay = false;
-                        }
+                int size = tempList.size();
+                for (int i = 0; i < size; i++) {
+                    int free;
+                    if (i == 0 || endOfDay) {
+                        free = tempList.get(i).timeSlot - 1;
 
                         for (int j = 0; j < free; j++) {
-                            tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix+j+1,tempList.get(i).timeSlot+j+1));
+                            tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
                         }
                     }
 
-                    ClassInfo[] dateInfo = new ClassInfo[5];
-                    for (int i = 0; i < 5; i++) {
-//                        dateInfo[i] = new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
-                        dateInfo[i] = new ClassInfo(getDay(i), Framework.GetDayUnix(i));
-                        tempList.add(dateInfo[i]);
-                    }
-                    Collections.sort(tempList, classSorter);
-                    for (int i = 0; i < 5; i++) {
-                        datePosition[i] = tempList.indexOf(dateInfo[i]);
-                    }
-
-                    List<ClassInfo> landscapeList = new ArrayList<>();
-
-                    if (params[0]) {
-                        size = tempList.size();
-                        int longest = 0;
-
-                        for (int i = 0; i < 5; i++) {
-                            if (i != 4) {
-                                longest = Math.max(datePosition[i+1]-datePosition[i], longest);
-                            } else {
-                                longest = Math.max(size-datePosition[i], longest);
-                            }
-                        }
-
-                        for (int i = 0; i < longest * 5; i++) {
-                            landscapeList.add(new ClassInfo());
-                        }
-
-                        int day = 0;
-                        int offset = 0;
-                        for (int i = 0; i < size; i++) {
-                            landscapeList.set((i - offset) * 5 + day, tempList.get(i));
-                            if (day != 4) {
-                                if (i + 1 == datePosition[day + 1]) {
-                                    day++;
-                                    offset = i + 1;
-                                }
-                            }
-                        }
-                    }
-
-                    timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
-
-                    ScheduleFragment.classArrayList.clear();
-                    if (params[0]) {
-                        ScheduleFragment.classArrayList.addAll(landscapeList);
+                    if (i + 1 < size) {
+                        free = tempList.get(i + 1).timeSlot - tempList.get(i).timeSlot - 1;
+                        endOfDay = (tempList.get(i + 1).timeStartUnix - tempList.get(i).timeStartUnix) > 10*3600;
                     } else {
-                        ScheduleFragment.classArrayList.addAll(tempList);
+                        free = 0;
+                        endOfDay = false;
                     }
 
-                    return true;
+                    for (int j = 0; j < free; j++) {
+                        tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix+j+1,tempList.get(i).timeSlot+j+1));
+                    }
+                }
 
+                ClassInfo[] dateInfo = new ClassInfo[5];
+                for (int i = 0; i < 5; i++) {
+//                        dateInfo[i] = new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
+                    dateInfo[i] = new ClassInfo(getDay(i), Framework.GetDayUnix(i));
+                    tempList.add(dateInfo[i]);
+                }
+                Collections.sort(tempList, classSorter);
+                for (int i = 0; i < 5; i++) {
+                    datePosition[i] = tempList.indexOf(dateInfo[i]);
+                }
+
+                List<ClassInfo> landscapeList = new ArrayList<>();
+
+                if (params[0]) {
+                    size = tempList.size();
+                    int longest = 0;
+
+                    for (int i = 0; i < 5; i++) {
+                        if (i != 4) {
+                            longest = Math.max(datePosition[i+1]-datePosition[i], longest);
+                        } else {
+                            longest = Math.max(size-datePosition[i], longest);
+                        }
+                    }
+
+                    for (int i = 0; i < longest * 5; i++) {
+                        landscapeList.add(new ClassInfo());
+                    }
+
+                    int day = 0;
+                    int offset = 0;
+                    for (int i = 0; i < size; i++) {
+                        landscapeList.set((i - offset) * 5 + day, tempList.get(i));
+                        if (day != 4) {
+                            if (i + 1 == datePosition[day + 1]) {
+                                day++;
+                                offset = i + 1;
+                            }
+                        }
+                    }
+                }
+
+                timeOfLastUpdate = (int) (System.currentTimeMillis()/1000);
+
+                ScheduleFragment.classArrayList.clear();
+                if (params[0]) {
+                    ScheduleFragment.classArrayList.addAll(landscapeList);
+                } else {
+                    ScheduleFragment.classArrayList.addAll(tempList);
+                }
             }
-            return false;
+            return error;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final Integer error) {
 
-            if (success) {
+            if (error == Framework.ERROR_NONE) {
                 ScheduleFragment.ca.notifyDataSetChanged();
                 if (datePickerWeek != null && datePickerStudent != null) {
                     // TODO: This should go in a function
@@ -581,6 +587,9 @@ public class ScheduleActivity extends AppCompatActivity
                         scroll = false;
                     }
                 }
+            } else if(error == Framework.ERROR_RIGHTS) {
+                rights.show();
+                ScheduleFragment.user = "~me";
             } else {
                 Snackbar.make(drawer, "Je bent op dit moment offline", Snackbar.LENGTH_INDEFINITE)
                         .setAction("Opnieuw proberen", new View.OnClickListener() {

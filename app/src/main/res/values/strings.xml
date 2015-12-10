@@ -34,6 +34,12 @@
     <string name="nav_preferences">Instellingen</string>
     <string name="nav_info">Over</string>
 
+    <!--Rights-->
+    <string name="rights">Roosters van anderen</string>
+    <string name="rights_text">Op dit moment is het niet mogelijk om de roosters van andere leerlingen te bekijken.
+    Vind je dit ook vervelend, zorg dan dat je dit kenbaar maakt bij docenten/mentoren/afdelingsmanagers/afdelingsassistenten.
+        Op deze manier kunnen we er misschien voor zorgen dat we wel weer toegang krijgen tot elkaars roosters.
+    </string>
     <!--About-->
     <string name="about">Over</string>
     <string name="about_text">

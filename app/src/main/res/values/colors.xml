@@ -3,9 +3,9 @@
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#388E3C</color>
     <!--TODO: Find better accent color-->
-    <color name="colorAccent">#FFC107</color>
-    <color name="colorAnnouncements">#2196F3</color>
-    <color name="colorAnnouncementsDark">#1976D2</color>
-    <color name="colorFriends">#F57C00</color>
-    <color name="colorFriendsDark">#e46700</color>
+    <color name="colorAccent">#8BC34A</color>
+    <!--<color name="colorAnnouncements">#2196F3</color>-->
+    <!--<color name="colorAnnouncementsDark">#1976D2</color>-->
+    <!--<color name="colorFriends">#F57C00</color>-->
+    <!--<color name="colorFriendsDark">#e46700</color>-->
 </resources>
