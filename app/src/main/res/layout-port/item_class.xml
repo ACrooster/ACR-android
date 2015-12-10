@@ -23,8 +23,6 @@
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="4dp"
     card_view:cardUseCompatPadding="true"
     android:layout_marginLeft="24dp"
     android:layout_marginRight="24dp"

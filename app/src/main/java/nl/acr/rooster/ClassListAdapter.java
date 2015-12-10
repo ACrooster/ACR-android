@@ -1,5 +1,6 @@
 package nl.acr.rooster;
 
+import android.content.Intent;
 import android.graphics.Paint;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -54,8 +55,14 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
                     holder.card.setCardElevation(0);
                     holder.card.setClickable(false);
                 } else {
-                    holder.card.setCardElevation(4);
+                    holder.card.setCardElevation(2);
                     holder.card.setClickable(true);
+                    holder.card.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            v.getContext().startActivity(new Intent(v.getContext(), MoreInfoActivity.class));
+                        }
+                    });
                 }
 
                 if (ci.status == Framework.STATUS_CANCELLED) {

@@ -48,6 +48,13 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        <activity android:name=".MoreInfoActivity"
+            android:theme="@style/BottomSheet.Light"
+            android:finishOnCloseSystemDialogs="true"
+            android:excludeFromRecents="true"
+            android:documentLaunchMode="never"
+            android:relinquishTaskIdentity="true" />
+
         <activity
             android:name=".PreferencesActivity"
             android:label="@string/title_activity_preferences"
