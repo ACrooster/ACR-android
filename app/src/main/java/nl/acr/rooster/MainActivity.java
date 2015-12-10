@@ -172,7 +172,9 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.menu_search).setVisible(true);
 
             navigationView.getMenu().getItem(0).setChecked(true);
-            progressBar.setVisibility(View.VISIBLE);
+            if (ScheduleFragment.classArrayList.size() == 0) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
 
             replaceFragment(sf);
         } else if (id == R.id.nav_announcements) {
