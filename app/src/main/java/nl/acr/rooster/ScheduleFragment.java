@@ -117,7 +117,6 @@ public class ScheduleFragment extends Fragment {
         months[11] = this.getString(R.string.month_dec);
     }
 
-
     // TODO: Check if there is a built in system get this
     public static String getDay(int index) {
 

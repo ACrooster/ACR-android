@@ -83,8 +83,11 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
             ClassInfo[] dateInfo = new ClassInfo[5];
             for (int i = 0; i < 5; i++) {
-//                        dateInfo[i] = new ClassInfo(getDay(i) + " " + Framework.GetDayNumber(i) + " " + getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
-                dateInfo[i] = new ClassInfo(ScheduleFragment.getDay(i), Framework.GetDayUnix(i));
+                if (params[0]) {
+                    dateInfo[i] = new ClassInfo(ScheduleFragment.getDay(i), Framework.GetDayUnix(i));
+                } else {
+                    dateInfo[i] = new ClassInfo(ScheduleFragment.getDay(i) + " " + Framework.GetDayNumber(i) + " " + ScheduleFragment.getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
+                }
                 tempList.add(dateInfo[i]);
             }
             Collections.sort(tempList, classSorter);
