@@ -1,9 +1,7 @@
 <resources>
     <string name="app_name">Rooster</string>
 
-    <string name="welcome">Dit is de login pagina van deze app.</string>
     <string name="school">School</string>
-    <string name="default_school">amstelveencollege</string>
     <string name="code">Code</string>
     <string name="login">Inloggen</string>
 
@@ -12,11 +10,10 @@
 
     <string name="login_help">Ga naar amstelveencollege.zportal.nl, log daar in en kies vervolgens in de rode balk de onderste optie. Klik daarna op "Koppel App". Er verschijnt nu een code in beeld, deze moet hierboven eenmalig ingevoerd worden.</string>
 
-    <string name="title_activity_schedule">Mijn rooster</string>
-    <string name="title_activity_schedule_announcements">Mededelingen</string>
-    <string name="title_activity_schedule_friends">Vrienden</string>
+    <string name="title_activity_main">Mijn rooster</string>
+    <string name="title_fragment_announcements">Mededelingen</string>
+    <string name="title_fragment_friends">Vrienden</string>
 
-    <string name="title_activity_search">Zoeken</string>
     <string name="title_activity_login">Inloggen</string>
     <string name="title_activity_preferences">Instellingen</string>
 

@@ -2,18 +2,18 @@ package nl.acr.rooster;
 
 import go.framework.Framework;
 
-public class ClassInfo {
-    protected String subject;
-    protected String teacher;
-    protected String timeStart;
-    protected String timeEnd;
-    protected String classRoom;
-    protected int status;
+class ClassInfo {
+    String subject;
+    String teacher;
+    String timeStart;
+    String timeEnd;
+    String classRoom;
+    final int status;
 
-    protected long timeStartUnix;
-    protected int timeSlot;
+    long timeStartUnix;
+    int timeSlot;
 
-    protected String date;
+    String date;
 
     ClassInfo(String subject, String teacher, String timeStart, String timeEnd, String classRoom, long status, long timeStartUnix, long timeSlot) {
         this.subject = subject;
@@ -38,7 +38,7 @@ public class ClassInfo {
         this.status = (int)Framework.STATUS_EMPTY;
     }
 
-    protected int getColor() {
+    int getColor() {
 
         // TODO: Move this into color.xml
         switch (status) {

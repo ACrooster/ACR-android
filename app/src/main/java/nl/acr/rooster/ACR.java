@@ -12,7 +12,7 @@ import org.acra.annotation.ReportsCrashes;
         resToastText = R.string.crash_toast_text
 )
 
-public class Scheduler extends Application {
+public class ACR extends Application {
 
     @Override
     public void onCreate() {

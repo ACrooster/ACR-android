@@ -14,7 +14,7 @@ import go.framework.Framework;
 
 public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.ClassViewHolder> {
 
-    private List<ClassInfo> classInfoList;
+    private final List<ClassInfo> classInfoList;
 
     public ClassListAdapter(List<ClassInfo> classInfoList) {
         this.classInfoList = classInfoList;
@@ -73,13 +73,13 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
     }
 
     public class ClassViewHolder extends RecyclerView.ViewHolder {
-        protected TextView subject;
-        protected TextView teacher;
-        protected TextView timeStart;
-        protected TextView timeEnd;
-        protected TextView classRoom;
-        protected CardView card;
-        protected TextView date;
+        protected final TextView subject;
+        protected final TextView teacher;
+        protected final TextView timeStart;
+        protected final TextView timeEnd;
+        protected final TextView classRoom;
+        protected final CardView card;
+        protected final TextView date;
 
         public ClassViewHolder(View v) {
             super(v);

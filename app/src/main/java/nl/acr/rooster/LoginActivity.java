@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -20,8 +19,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import java.util.Objects;
 
 import go.framework.Framework;
 
@@ -153,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("name", name);
                     editor.putString("id", id);
                     editor.apply();
-                    Intent goToSchedule = new Intent(getApplicationContext(), ScheduleActivity.class);
+                    Intent goToSchedule = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(goToSchedule);
                     break;
 
