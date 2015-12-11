@@ -34,7 +34,6 @@ public class ScheduleFragment extends Fragment {
     public static void setWeekUnix(int weekUnix) {
 
         ScheduleFragment.weekUnix = weekUnix;
-        Log.w("Week", String.valueOf(weekUnix));
     }
 
     @Override

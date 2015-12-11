@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,9 +34,12 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import cyanogenmod.alarmclock.CyanogenModAlarmClock;
 import go.framework.Framework;
 
 public class MainActivity extends AppCompatActivity
@@ -109,6 +113,16 @@ public class MainActivity extends AppCompatActivity
 
         replaceFragment(sf);
 
+        if (cyanogenmod.os.Build.CM_VERSION.SDK_INT >= cyanogenmod.os.Build.CM_VERSION_CODES.BOYSENBERRY) {
+            Intent intent = CyanogenModAlarmClock.createAlarmIntent(this);
+            intent.putExtra(AlarmClock.EXTRA_HOUR, 9);
+            intent.putExtra(AlarmClock.EXTRA_MINUTES, 20);
+            intent.putExtra(AlarmClock.EXTRA_MESSAGE, "Maandag 1");
+            intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+            intent.putExtra(AlarmClock.EXTRA_DAYS, new int[]{Calendar.MONDAY});
+            intent.putExtra(AlarmClock.EXTRA_VIBRATE, true);
+            startActivityForResult(intent, 0);
+        }
     }
 
     @Override
@@ -118,7 +132,6 @@ public class MainActivity extends AppCompatActivity
             if (menu.findItem(R.id.menu_search).isActionViewExpanded()) {
                 menu.findItem(R.id.menu_search).collapseActionView();
             }
-            Log.w("Search", query);
 
             ScheduleFragment.user = query;
             UpdateSchedule.scroll = true;

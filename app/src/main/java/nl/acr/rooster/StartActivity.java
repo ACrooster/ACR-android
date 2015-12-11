@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import go.framework.Framework;
 
-
 public class StartActivity extends AppCompatActivity {
 
     public static final String PREFS_NAME = "ACRPrefs";
