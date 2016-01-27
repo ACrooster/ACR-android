@@ -120,7 +120,7 @@ public class ScheduleFragment extends Fragment {
     // TODO: Check if there is a built in system get this
     public static String getDay(int index) {
 	    if (index > 0 && index <= days.length) {
-		    return days[i-1];
+		    return days[index];
 	    }
 	    return "";
     }
@@ -128,7 +128,7 @@ public class ScheduleFragment extends Fragment {
     // TODO: Check if there is a built in system get this
     public static String getMonth(int index) {
     	if (index > 0 && index <= months.length) {
-		    return months[i-1];
+		    return months[index];
 	    }
 	    return "";
     }

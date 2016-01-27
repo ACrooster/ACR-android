@@ -1,5 +1,8 @@
 package nl.acr.rooster;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import go.framework.Framework;
 
@@ -146,9 +150,10 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
             if (datePickerWeek != null && datePickerStudent != null) {
                 // TODO: This should go in a function
                 // TODO: This should use strings.xml
-                datePickerWeek.setText("Week " + Framework.GetWeek());
+                datePickerWeek.setText(MainActivity.resources.getString(R.string.week) + " " + Framework.GetWeek());
                 // TODO: Add system that checks whose schedule you are looking at
-                datePickerStudent.setText(Framework.GetUser());
+                String user = Framework.GetUser();
+                datePickerStudent.setText(user.equals("~me") ? MainActivity.resources.getString(R.string.my_schedule) : user);
 
                 int position = datePosition[dayOfWeek];
                 if (scroll && ScheduleFragment.classArrayList.size() > position) {
