@@ -1,7 +1,12 @@
 package nl.acr.rooster;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Fragment;
 import android.app.SearchManager;
+import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -59,6 +64,13 @@ public class MainActivity extends AppCompatActivity
 
     public static Resources resources = null;
 
+    // Sync
+    public static final String AUTHORITY = ".provider";
+    public static final String ACCOUNT_TYPE = "nl.acr.rooster";
+    public static final String ACCOUNT = "Rooster";
+
+    Account mAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +125,26 @@ public class MainActivity extends AppCompatActivity
         replaceFragment(sf);
 
         resources = getResources();
+
+        // Sync
+
+        mAccount = createSyncAccount(this);
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, Bundle.EMPTY, 60 * 15);
+    }
+
+    public static Account createSyncAccount(Context context) {
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+
+        AccountManager accountManager = (AccountManager)context.getSystemService(ACCOUNT_SERVICE);
+
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+
+            return newAccount;
+        } else {
+
+            return accountManager.getAccountsByType(ACCOUNT_TYPE)[0];
+        }
     }
 
     @Override
