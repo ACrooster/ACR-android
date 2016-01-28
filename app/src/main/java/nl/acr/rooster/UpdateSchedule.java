@@ -53,7 +53,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
             int classCount = (int) Framework.GetClassCount();
             for (int i = 0; i < classCount; i++) {
                 if (Framework.IsClassValid(i)) {
-                    tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassTimeSlot(i)));
+                    tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassEndUnix(i), Framework.GetClassTimeSlot(i)));
                 }
             }
 
@@ -68,7 +68,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                     free = tempList.get(i).timeSlot - 1;
 
                     for (int j = 0; j < free; j++) {
-                        tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
+                        tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
                     }
                 }
 
@@ -81,7 +81,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 }
 
                 for (int j = 0; j < free; j++) {
-                    tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix + j + 1, tempList.get(i).timeSlot + j + 1));
+                    tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix + j + 1, tempList.get(i).timeStartUnix + j + 1, tempList.get(i).timeSlot + j + 1));
                 }
             }
 
@@ -94,6 +94,10 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 }
                 tempList.add(dateInfo[i]);
             }
+
+            // Nu balk
+            tempList.add(new ClassInfo(System.currentTimeMillis() / 1000));
+
             Collections.sort(tempList, classSorter);
             for (int i = 0; i < 5; i++) {
                 datePosition[i] = tempList.indexOf(dateInfo[i]);

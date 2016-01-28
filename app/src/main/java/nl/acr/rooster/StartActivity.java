@@ -41,5 +41,6 @@ public class StartActivity extends AppCompatActivity {
             Intent goToLogin = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(goToLogin);
         }
+        finish();
     }
 }

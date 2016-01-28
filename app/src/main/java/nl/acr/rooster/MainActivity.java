@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity
     static final AnnouncementsFragment af = new AnnouncementsFragment();
     static final FriendsFragment ff = new FriendsFragment();
 
-    private DatePickerDialog dialog;
+    private static DatePickerDialog dialog;
     static private LinearLayout datePickerButton;
     public static DrawerLayout drawer;
     static public NavigationView navigationView;
@@ -147,7 +147,8 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            moveTaskToBack(true);
+//            moveTaskToBack(true);
+            finish();
         }
     }
 
@@ -271,7 +272,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void goToday() {
+    public static void goToday() {
         cal.setTime(new Date(System.currentTimeMillis()));
         UpdateSchedule.dayOfWeek = DayPicker.toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
         ScheduleFragment.setWeekUnix((int) (System.currentTimeMillis() / 1000));

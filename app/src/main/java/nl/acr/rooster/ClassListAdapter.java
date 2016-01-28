@@ -34,14 +34,22 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
             if (ci.status == Framework.STATUS_DATE) {
                 holder.card.setVisibility(View.GONE);
                 holder.date.setVisibility(View.VISIBLE);
+                holder.line.setVisibility(View.GONE);
 
                 holder.date.setText(ci.date);
             } else if(ci.status == Framework.STATUS_EMPTY) {
                 holder.card.setVisibility(View.GONE);
                 holder.date.setVisibility(View.GONE);
+                holder.line.setVisibility(View.GONE);
+            } else if(ci.status == Framework.STATUS_MARKER) {
+                holder.card.setVisibility(View.GONE);
+                holder.date.setVisibility(View.GONE);
+//                holder.line.setVisibility(View.VISIBLE);
+                holder.line.setVisibility(View.GONE);
             } else {
                 holder.card.setVisibility(View.VISIBLE);
                 holder.date.setVisibility(View.GONE);
+                holder.line.setVisibility(View.GONE);
 
                 holder.subject.setText(ci.subject);
                 holder.teacher.setText(ci.teacher);
@@ -80,6 +88,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
         protected final TextView classRoom;
         protected final CardView card;
         protected final TextView date;
+        protected final View line;
 
         public ClassViewHolder(View v) {
             super(v);
@@ -90,6 +99,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
             classRoom = (TextView)v.findViewById(R.id.classRoom);
             card = (CardView)v.findViewById(R.id.card_view);
             date = (TextView)v.findViewById(R.id.date);
+            line = (View)v.findViewById(R.id.line);
         }
     }
 
