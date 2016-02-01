@@ -42,11 +42,6 @@ class ClassInfo {
         this.status = (int)Framework.STATUS_EMPTY;
     }
 
-    ClassInfo(long currentTime) {
-        this.status = (int)Framework.STATUS_MARKER;
-        this.timeStartUnix = currentTime - 60 * 5;
-    }
-
     int getColor() {
 
         int color;
@@ -86,11 +81,16 @@ class ClassInfo {
         }
 
         long currentUnix = System.currentTimeMillis() / 1000;
-        if (timeStartUnix - 60 * 10 < currentUnix && timeEndUnix > currentUnix) {
+        if (timeStartUnix < currentUnix && timeEndUnix > currentUnix) {
 
             float[] hsv = new float[3];
             Color.colorToHSV(color, hsv);
-            hsv[2] *= 1.2f; // value component
+            hsv[2] *= 0.7f; // value component
+            color = Color.HSVToColor(hsv);
+        } else if (timeStartUnix - 60 * 10 < currentUnix && timeStartUnix > currentUnix) {
+            float[] hsv = new float[3];
+            Color.colorToHSV(color, hsv);
+            hsv[2] *= 0.9f; // value component
             color = Color.HSVToColor(hsv);
         }
 

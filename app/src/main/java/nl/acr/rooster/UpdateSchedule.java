@@ -95,9 +95,6 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 tempList.add(dateInfo[i]);
             }
 
-            // Nu balk
-            tempList.add(new ClassInfo(System.currentTimeMillis() / 1000));
-
             Collections.sort(tempList, classSorter);
             for (int i = 0; i < 5; i++) {
                 datePosition[i] = tempList.indexOf(dateInfo[i]);
