@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-//        if (settings.getInt("tutorial", 0) < StartActivity.TUTORIAL_VERSION) {
+        if (settings.getInt("tutorial", 0) < StartActivity.TUTORIAL_VERSION) {
 
             Log.w("Tutorial", String.valueOf(settings.getInt("tutorial", 0)));
             Log.w("Tutorial", String.valueOf(StartActivity.TUTORIAL_VERSION));
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity
                     .content(Html.fromHtml(getString(R.string.tutorial_text)))
                     .positiveText(R.string.ok);
             tutorial.show();
-//        }
+        }
     }
 
     @Override
