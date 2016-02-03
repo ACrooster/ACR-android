@@ -16,6 +16,8 @@ import go.framework.Framework;
 public class StartActivity extends AppCompatActivity {
 
     public static final String PREFS_NAME = "ACRPrefs";
+    public static long RELOGIN_DATE = 1454527909;
+    public static int TUTORIAL_VERSION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +34,7 @@ public class StartActivity extends AppCompatActivity {
         int mGMTOffset = mTimeZone.getRawOffset();
         Framework.SetTimeDiff(TimeUnit.HOURS.convert(mGMTOffset, TimeUnit.MILLISECONDS));
 
-        if (settings.contains("token")) {
+        if (settings.contains("token") && settings.getLong("login_date", 0) > RELOGIN_DATE) {
             Framework.SetToken(settings.getString("token", ""));
             Intent goToSchedule = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(goToSchedule);

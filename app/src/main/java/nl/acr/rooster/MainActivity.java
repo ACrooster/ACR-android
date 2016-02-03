@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -113,6 +114,39 @@ public class MainActivity extends AppCompatActivity
         replaceFragment(sf);
 
         resources = getResources();
+
+        SharedPreferences.Editor editor = settings.edit();
+
+        try {
+            if (settings.getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+
+                editor.putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
+                editor.apply();
+
+                MaterialDialog.Builder update = new MaterialDialog.Builder(this)
+                        .title(R.string.update)
+                        .content(R.string.update_text)
+                        .positiveText(R.string.ok);
+                update.show();
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (settings.getInt("tutorial", 0) < StartActivity.TUTORIAL_VERSION) {
+
+            Log.w("Tutorial", String.valueOf(settings.getInt("tutorial", 0)));
+            Log.w("Tutorial", String.valueOf(StartActivity.TUTORIAL_VERSION));
+
+            editor.putInt("tutorial", StartActivity.TUTORIAL_VERSION);
+            editor.apply();
+
+            MaterialDialog.Builder tutorial = new MaterialDialog.Builder(this)
+                    .title(R.string.tutorial)
+                    .content(R.string.tutorial_text)
+                    .positiveText(R.string.ok);
+            tutorial.show();
+        }
     }
 
     @Override
@@ -124,7 +158,7 @@ public class MainActivity extends AppCompatActivity
             }
             Log.w("Search", query);
 
-            ScheduleFragment.user = query;
+            ScheduleFragment.user = query.toLowerCase();
             UpdateSchedule.scroll = true;
             ScheduleFragment.createList();
         }
@@ -148,7 +182,15 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
 //            moveTaskToBack(true);
-            finish();
+            if (!ScheduleFragment.user.equals(Framework.MY_SCHEDULE)) {
+
+                ScheduleFragment.user = Framework.MY_SCHEDULE;
+                UpdateSchedule.scroll = true;
+                ScheduleFragment.createList();
+            } else {
+
+                finish();
+            }
         }
     }
 

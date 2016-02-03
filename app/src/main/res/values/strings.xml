@@ -17,6 +17,8 @@
     <string name="title_activity_login">Inloggen</string>
     <string name="title_activity_preferences">Instellingen</string>
 
+    <string name="relogin">Je moet opnieuw inloggen</string>
+    <string name="rights">Je hebt geen rechten om dit te kunnen zien</string>
     <string name="offline">Je bent op dit moment niet online</string>
     <string name="retry">Opnieuw proberen</string>
 
@@ -33,11 +35,27 @@
 
     <string name="my_schedule">Mijn rooster</string>
 
-    <!--Rights-->
-    <string name="rights">Roosters van anderen</string>
-    <string name="rights_text">Op dit moment is het niet mogelijk om de roosters van andere leerlingen te bekijken.
-    Vind je dit ook vervelend, zorg dan dat je dit kenbaar maakt bij docenten/mentoren/afdelingsmanagers/afdelingsassistenten.
-        Op deze manier kunnen we er misschien voor zorgen dat we wel weer toegang krijgen tot elkaars roosters.
+    <!--Tutorial-->
+    <string name="tutorial">Uitleg</string>
+    <string name="tutorial_text">
+        <b>WAARSCHUWING</b>: Dit is een onofficiële app. \n\n
+
+        Op het rooster worden je normale vakken aangegeven in het wit.\n\n
+        Het vak dat je nu hebt zal een donkerdere kleur hebben en het vak dat in de komende 10 minuten begint zal ook iets donkerder zijn.\n\n
+
+        Bij <b>uitval</b> wordt dit aangegeven met <font style="color:#ff5722">rood</font>, ook zal de naam van het vak doorgestreept zijn.\n\n
+        Bij een <b>wijziging</b> zal het aangegeven worden met <font color="blue">blauw</font>.\n\n
+        <b>Toetsen</b> in de toetsweek worden aangeven met <font color="orange">oranje</font>. \n\n
+        <b>Activiteiten</b> zullen aangegeven worden met <font color="green">groen</font>.\n\n
+
+        Als je een <b>overzicht</b> wilt zien van je rooster dan kan dit door je telefoon een kwartslag te draaien.\n\n
+
+        Het is ook mogelijk om te <b>zoeken</b> naar de roosters van andere, op dit moment kan dit alleen door het leerlingnummer/docentcode in te voeren.\n\n
+    </string>
+
+    <string name="update">Wat is er nieuw</string>
+    <string name="update_text">
+        Het is vanaf nu weer mogelijk om de roosters van andere te kunnen bekijken, helaas heb je hier op dit moment wel het leerling nummer voor nodig.
     </string>
 
     <!--About-->

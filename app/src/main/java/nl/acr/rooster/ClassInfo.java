@@ -75,7 +75,7 @@ class ClassInfo {
                 break;
 
             case (int)Framework.STATUS_EXAM:
-                color = 0xff9c27b0;
+                color = 0xffff9800;
                 break;
 
         }

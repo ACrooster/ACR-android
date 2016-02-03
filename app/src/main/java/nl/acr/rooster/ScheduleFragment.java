@@ -79,11 +79,6 @@ public class ScheduleFragment extends Fragment {
 
         MainActivity.goToday();
 
-        UpdateSchedule.rights = new MaterialDialog.Builder(getActivity())
-                .title(R.string.rights)
-                .content(R.string.rights_text)
-                .positiveText(R.string.ok);
-
         return rootView;
     }
 

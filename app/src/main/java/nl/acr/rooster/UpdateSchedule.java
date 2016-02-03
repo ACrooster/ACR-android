@@ -28,7 +28,6 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
     public static TextView datePickerWeek;
     public static TextView datePickerStudent;
-    public static MaterialDialog.Builder rights;
 
     @Override
     protected void onPreExecute() {
@@ -164,12 +163,13 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 }
             }
         } else if (error == Framework.ERROR_RIGHTS) {
-            rights.show();
             ScheduleFragment.user = "~me";
+            Snackbar.make(MainActivity.drawer, MainActivity.resources.getString(R.string.rights), Snackbar.LENGTH_SHORT)
+                    .show();
         } else {
             // TODO: Get these strings from strings.xml
-            Snackbar.make(MainActivity.drawer, "Je bent op dit moment offline", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Opnieuw proberen", new View.OnClickListener() {
+            Snackbar.make(MainActivity.drawer, MainActivity.resources.getString(R.string.retry), Snackbar.LENGTH_INDEFINITE)
+                    .setAction(MainActivity.resources.getString(R.string.offline), new View.OnClickListener() {
 
                         @Override
                         public void onClick(View v) {
