@@ -14,6 +14,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-        if (settings.getInt("tutorial", 0) < StartActivity.TUTORIAL_VERSION) {
+//        if (settings.getInt("tutorial", 0) < StartActivity.TUTORIAL_VERSION) {
 
             Log.w("Tutorial", String.valueOf(settings.getInt("tutorial", 0)));
             Log.w("Tutorial", String.valueOf(StartActivity.TUTORIAL_VERSION));
@@ -143,10 +144,10 @@ public class MainActivity extends AppCompatActivity
 
             MaterialDialog.Builder tutorial = new MaterialDialog.Builder(this)
                     .title(R.string.tutorial)
-                    .content(R.string.tutorial_text)
+                    .content(Html.fromHtml(getString(R.string.tutorial_text)))
                     .positiveText(R.string.ok);
             tutorial.show();
-        }
+//        }
     }
 
     @Override

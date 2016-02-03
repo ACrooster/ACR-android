@@ -38,19 +38,21 @@
     <!--Tutorial-->
     <string name="tutorial">Uitleg</string>
     <string name="tutorial_text">
-        <b>WAARSCHUWING</b>: Dit is een onofficiële app. \n\n
+        <![CDATA[
+        <b>WAARSCHUWING</b>: deze app is onofficieel en nog in ontwikkeling.<br><br>
 
-        Op het rooster worden je normale vakken aangegeven in het wit.\n\n
-        Het vak dat je nu hebt zal een donkerdere kleur hebben en het vak dat in de komende 10 minuten begint zal ook iets donkerder zijn.\n\n
+        Op het rooster worden je normale vakken aangegeven in het wit.<br><br>
+        Het vak dat je nu hebt zal een donkerdere kleur hebben en het vak dat in de komende 10 minuten begint zal ook iets donkerder zijn.<br><br>
 
-        Bij <b>uitval</b> wordt dit aangegeven met <font style="color:#ff5722">rood</font>, ook zal de naam van het vak doorgestreept zijn.\n\n
-        Bij een <b>wijziging</b> zal het aangegeven worden met <font color="blue">blauw</font>.\n\n
-        <b>Toetsen</b> in de toetsweek worden aangeven met <font color="orange">oranje</font>. \n\n
-        <b>Activiteiten</b> zullen aangegeven worden met <font color="green">groen</font>.\n\n
+        Bij <b>uitval</b> wordt dit aangegeven met <font color=#ff5722>rood</font>, ook zal de naam van het vak doorgestreept zijn.<br><br>
+        Bij een <b>wijziging</b> zal het aangegeven worden met <font color=#2196f3>blauw</font>.<br><br>
+        <b>Toetsen</b> in de toetsweek worden aangeven met <font color=#ff9800>oranje</font>.<br><br>
+        <b>Activiteiten</b> zullen aangegeven worden met <font color=#cddc39>groen</font>.<br><br>
 
-        Als je een <b>overzicht</b> wilt zien van je rooster dan kan dit door je telefoon een kwartslag te draaien.\n\n
+        Als je een <b>overzicht</b> wilt zien van je rooster dan kan dit door je telefoon een kwartslag te draaien.<br><br>
 
-        Het is ook mogelijk om te <b>zoeken</b> naar de roosters van andere, op dit moment kan dit alleen door het leerlingnummer/docentcode in te voeren.\n\n
+        Het is ook mogelijk om te <b>zoeken</b> naar de roosters van andere, op dit moment kan dit alleen door het leerlingnummer/docentcode in te voeren.<br><br>
+        ]]>
     </string>
 
     <string name="update">Wat is er nieuw</string>
