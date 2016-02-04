@@ -1,6 +1,7 @@
 package nl.acr.rooster;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,11 +11,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.InputType;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Gravity;
@@ -34,10 +37,17 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
+import java.lang.reflect.Type;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 import go.framework.Framework;
 
@@ -45,8 +55,10 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final ScheduleFragment sf = new ScheduleFragment();
-    static final AnnouncementsFragment af = new AnnouncementsFragment();
+//    static final AnnouncementsFragment af = new AnnouncementsFragment();
     static final FriendsFragment ff = new FriendsFragment();
+
+    static private Fragment currentFragment = sf;
 
     private static DatePickerDialog dialog;
     static private LinearLayout datePickerButton;
@@ -60,6 +72,14 @@ public class MainActivity extends AppCompatActivity
     public static boolean landscape = false;
 
     public static Resources resources = null;
+    private static FragmentManager fragmentManager;
+    private static ActionBar actionBar;
+
+    public static Menu menu;
+
+    public static MaterialDialog.Builder edit;
+    public static int editPosition = 0;
+    public static MaterialDialog.InputCallback editCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +89,9 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        assert (getSupportActionBar() != null);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        actionBar = getSupportActionBar();
+        assert (actionBar != null);
+        actionBar.setDisplayShowTitleEnabled(false);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -112,9 +133,10 @@ public class MainActivity extends AppCompatActivity
         dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         dialog.vibrate(false);
 
-        replaceFragment(sf);
-
         resources = getResources();
+        fragmentManager = getFragmentManager();
+
+        replaceFragment(currentFragment);
 
         SharedPreferences.Editor editor = settings.edit();
 
@@ -136,9 +158,6 @@ public class MainActivity extends AppCompatActivity
 
         if (settings.getInt("tutorial", 0) < StartActivity.TUTORIAL_VERSION) {
 
-            Log.w("Tutorial", String.valueOf(settings.getInt("tutorial", 0)));
-            Log.w("Tutorial", String.valueOf(StartActivity.TUTORIAL_VERSION));
-
             editor.putInt("tutorial", StartActivity.TUTORIAL_VERSION);
             editor.apply();
 
@@ -148,6 +167,62 @@ public class MainActivity extends AppCompatActivity
                     .positiveText(R.string.ok);
             tutorial.show();
         }
+
+        if (!settings.getString("friends", "").equals("")) {
+
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<FriendInfo>>(){}.getType();
+
+            FriendsFragment.friendArrayList.clear();
+            List<FriendInfo> friendList = gson.fromJson(settings.getString("friends", ""), type);
+            FriendsFragment.friendArrayList.addAll(friendList);
+
+        }
+
+        invalidateOptionsMenu();
+        editCallback = new MaterialDialog.InputCallback() {
+
+            @Override
+            public void onInput(@NonNull MaterialDialog materialDialog, CharSequence charSequence) {
+
+                FriendsFragment.friendArrayList.get(editPosition).name = charSequence.toString();
+                Collections.sort(FriendsFragment.friendArrayList, MainActivity.nameSorter);
+                FriendsFragment.fa.notifyDataSetChanged();
+
+                Gson gson = new Gson();
+                String jsonFriends = gson.toJson(FriendsFragment.friendArrayList);
+
+                SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+
+                editor.putString("friends", jsonFriends);
+                editor.apply();
+            }
+        };
+        edit = new MaterialDialog.Builder(this)
+                .title(getText(R.string.edit))
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .neutralText(R.string.cancel)
+                .negativeText(R.string.remove)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+
+                    @Override
+                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+
+                        FriendsFragment.friendArrayList.remove(editPosition);
+                        Collections.sort(FriendsFragment.friendArrayList, MainActivity.nameSorter);
+                        FriendsFragment.fa.notifyDataSetChanged();
+
+                        Gson gson = new Gson();
+                        String jsonFriends = gson.toJson(FriendsFragment.friendArrayList);
+
+                        SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
+                        SharedPreferences.Editor editor = settings.edit();
+
+                        editor.putString("friends", jsonFriends);
+                        editor.apply();
+                    }
+                });
     }
 
     @Override
@@ -183,7 +258,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
 //            moveTaskToBack(true);
-            if (!ScheduleFragment.user.equals(Framework.MY_SCHEDULE)) {
+            if (!ScheduleFragment.user.equals(Framework.MY_SCHEDULE) && sf.isVisible()) {
 
                 ScheduleFragment.user = Framework.MY_SCHEDULE;
                 UpdateSchedule.scroll = true;
@@ -202,14 +277,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        ActionBar ab = getSupportActionBar();
-        assert(ab != null);
+        assert(actionBar != null);
 
         progressBar.setVisibility(View.GONE);
 
         if (id == R.id.nav_schedule) {
-            ab.setDisplayShowTitleEnabled(false);
-            ab.setTitle(R.string.title_activity_main);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setTitle(R.string.title_activity_main);
 
             ScheduleFragment.user = Framework.MY_SCHEDULE;
             UpdateSchedule.dayOfWeek = DayPicker.toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
@@ -225,22 +299,24 @@ public class MainActivity extends AppCompatActivity
             }
 
             replaceFragment(sf);
-        } else if (id == R.id.nav_announcements) {
-            ab.setDisplayShowTitleEnabled(true);
-            ab.setTitle(R.string.title_fragment_announcements);
-
-            datePickerButton.setVisibility(View.GONE);
-            menu.findItem(R.id.menu_search).setVisible(false);
-
-            replaceFragment(af);
+            currentFragment = sf;
+//        } else if (id == R.id.nav_announcements) {
+//            ab.setDisplayShowTitleEnabled(true);
+//            ab.setTitle(R.string.title_fragment_announcements);
+//
+//            datePickerButton.setVisibility(View.GONE);
+//            menu.findItem(R.id.menu_search).setVisible(false);
+//
+//            replaceFragment(af);
         } else if (id == R.id.nav_friends) {
-            ab.setDisplayShowTitleEnabled(true);
-            ab.setTitle(R.string.title_fragment_friends);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setTitle(R.string.title_fragment_friends);
 
             datePickerButton.setVisibility(View.GONE);
             menu.findItem(R.id.menu_search).setVisible(false);
 
             replaceFragment(ff);
+            currentFragment = ff;
         } else if (id == R.id.nav_preferences) {
 
             Intent goToPreferences = new Intent(getApplicationContext(), PreferencesActivity.class);
@@ -270,10 +346,14 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+        invalidateOptionsMenu();
+
+
         return true;
     }
 
-    private void replaceFragment(Fragment fragment) {
+    private static void replaceFragment(Fragment fragment) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
@@ -281,20 +361,38 @@ public class MainActivity extends AppCompatActivity
         }
 
         // TODO: Figure out a better transition system/speed up transition
-        getFragmentManager().beginTransaction()
+        fragmentManager.beginTransaction()
                 .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
                 .replace(R.id.schedule_fragment_container, fragment)
                 .commit();
     }
 
-    private Menu menu;
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if (currentFragment == sf) {
+
+            for (int i = 0; i < menu.size(); i++) {
+
+                menu.getItem(i).setVisible(true);
+            }
+        } else {
+
+            for (int i = 0; i < menu.size(); i++) {
+
+                menu.getItem(i).setVisible(false);
+            }
+        }
+
+        return true;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
 
-        this.menu = menu;
+        MainActivity.menu = menu;
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
@@ -310,10 +408,60 @@ public class MainActivity extends AppCompatActivity
             ScheduleFragment.createList();
         } else if (id == R.id.menu_today) {
             goToday();
+        } else if (id == R.id.menu_star) {
+
+            if (ScheduleFragment.user.equals(Framework.MY_SCHEDULE)) {
+
+                Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.selfFriends), Snackbar.LENGTH_SHORT)
+                        .show();
+
+                return true;
+            }
+
+            for (int i = 0; i < FriendsFragment.friendArrayList.size(); i++) {
+                if (FriendsFragment.friendArrayList.get(i).code.equals(ScheduleFragment.user)) {
+
+                    Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.alreadyFriends), Snackbar.LENGTH_SHORT)
+                            .show();
+
+                    return true;
+                }
+            }
+
+            MaterialDialog.Builder name = new MaterialDialog.Builder(this)
+                    .title(getText(R.string.addFriend))
+                    .inputType(InputType.TYPE_CLASS_TEXT)
+                    .input(getString(R.string.name), "", new MaterialDialog.InputCallback() {
+
+                        @Override
+                        public void onInput(@NonNull MaterialDialog materialDialog, CharSequence charSequence) {
+
+                            FriendsFragment.friendArrayList.add(new FriendInfo(charSequence.toString(), ScheduleFragment.user));
+                            Collections.sort(FriendsFragment.friendArrayList, nameSorter);
+                            FriendsFragment.fa.notifyDataSetChanged();
+
+                            Gson gson = new Gson();
+                            String jsonFriends = gson.toJson(FriendsFragment.friendArrayList);
+
+                            SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
+                            SharedPreferences.Editor editor = settings.edit();
+
+                            editor.putString("friends", jsonFriends);
+                            editor.apply();
+                        }
+                    });
+            name.show();
         }
 
         return true;
     }
+
+    public static final Comparator<FriendInfo> nameSorter = new Comparator<FriendInfo>() {
+        @Override
+        public int compare(FriendInfo lhs, FriendInfo rhs) {
+            return lhs.name.compareToIgnoreCase(rhs.name);
+        }
+    };
 
     public static void goToday() {
         cal.setTime(new Date(System.currentTimeMillis()));
@@ -322,6 +470,35 @@ public class MainActivity extends AppCompatActivity
         UpdateSchedule.scroll = true;
         ScheduleFragment.createList();
         dialog = DatePickerDialog.newInstance(new DayPicker(), cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+    }
+
+    public static void goTo(String code) {
+
+        replaceFragment(sf);
+        currentFragment = sf;
+
+        assert(actionBar != null);
+
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setTitle(R.string.title_activity_main);
+
+        ScheduleFragment.user = Framework.MY_SCHEDULE;
+        UpdateSchedule.dayOfWeek = DayPicker.toDayNumber(cal.get(Calendar.DAY_OF_WEEK));
+        ScheduleFragment.setWeekUnix((int) (System.currentTimeMillis() / 1000));
+        UpdateSchedule.scroll = true;
+        ScheduleFragment.createList();
+        datePickerButton.setVisibility(View.VISIBLE);
+        menu.findItem(R.id.menu_search).setVisible(true);
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+        if (ScheduleFragment.classArrayList.size() == 0) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        ScheduleFragment.user = code;
+        goToday();
+
+        actionBar.invalidateOptionsMenu();
     }
 
 }

@@ -47,5 +47,6 @@ dependencies {
     compile 'ch.acra:acra:4.7.0-RC.3'
     compile 'com.wdullaer:materialdatetimepicker:2.0.2'
     compile 'com.github.afollestad.material-dialogs:core:0.8.5.2'
+    compile 'com.google.code.gson:gson:2.5'
     compile project(':framework')
 }

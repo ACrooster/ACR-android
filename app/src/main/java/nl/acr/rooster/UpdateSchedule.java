@@ -153,7 +153,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 datePickerWeek.setText(MainActivity.resources.getString(R.string.week) + " " + Framework.GetWeek());
                 // TODO: Add system that checks whose schedule you are looking at
                 String user = Framework.GetUser();
-                datePickerStudent.setText(user.equals("~me") ? MainActivity.resources.getString(R.string.my_schedule) : user);
+                datePickerStudent.setText(user.equals(Framework.MY_SCHEDULE) ? MainActivity.resources.getString(R.string.my_schedule) : user);
 
                 int position = datePosition[dayOfWeek];
                 if (scroll && ScheduleFragment.classArrayList.size() > position) {

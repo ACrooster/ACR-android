@@ -4,13 +4,18 @@
     <item android:id="@+id/menu_search"
         android:title="@string/search_title"
         android:icon="@drawable/ic_search"
-        app:showAsAction="collapseActionView|ifRoom"
+        app:showAsAction="collapseActionView|always"
         app:actionViewClass="android.support.v7.widget.SearchView" />
     <item
         android:id="@+id/menu_today"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:icon="@drawable/ic_today"
         android:title="@string/today_title"/>
+    <item
+        android:id="@+id/menu_star"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_star"
+        android:title="@string/star_title"/>
     <item
         android:id="@+id/menu_refresh"
         app:showAsAction="never"

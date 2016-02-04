@@ -38,22 +38,21 @@ public class ScheduleFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup containter, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_schedule, containter, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_schedule, container, false);
 
         initDayMonthNames();
 
-        classList = (RecyclerView) rootView.findViewById(R.id.classListMon);
+        classList = (RecyclerView) rootView.findViewById(R.id.classList);
         classList.setHasFixedSize(true);
+        classList.setAdapter(ca);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             classList.setLayoutManager(new LinearLayoutManagerWithSmoothScroller(getActivity()));
-            classList.setAdapter(ca);
             MainActivity.landscape = false;
         } else {
             classList.setHasFixedSize(true);
             GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 5);
             classList.setLayoutManager(layoutManager);
-            classList.setAdapter(ca);
             MainActivity.landscape = true;
         }
 
