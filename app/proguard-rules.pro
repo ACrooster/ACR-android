@@ -18,3 +18,4 @@
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.examples.android.model.** { *; }
 -keep class nl.acr.rooster.FriendInfo { *; }
+-keep class nl.acr.rooster.ClassInfo { *; }

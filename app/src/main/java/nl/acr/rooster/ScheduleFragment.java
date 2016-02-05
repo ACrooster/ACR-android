@@ -74,9 +74,9 @@ public class ScheduleFragment extends Fragment {
 
         if (weekUnix == 0) {
             setWeekUnix((int) (System.currentTimeMillis() / 1000));
+            MainActivity.goToday();
         }
-
-        MainActivity.goToday();
+        createList();
 
         return rootView;
     }

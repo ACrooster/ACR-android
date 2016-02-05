@@ -2,15 +2,20 @@ package nl.acr.rooster;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.view.textservice.SpellCheckerInfo;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,11 +28,15 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
     static private final int[] datePosition = new int[5];
     public static boolean scroll = true;
+    private static boolean landscape = false;
     public static int dayOfWeek = 0;
     public static int timeOfLastUpdate = 0;
 
     public static TextView datePickerWeek;
     public static TextView datePickerStudent;
+
+    List<ClassInfo> tempList;
+    List<ClassInfo> landscapeList;
 
     @Override
     protected void onPreExecute() {
@@ -45,7 +54,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
     @Override
     protected Integer doInBackground(Boolean... params) {
         Framework.RequestScheduleData(ScheduleFragment.weekUnix, ScheduleFragment.user);
-        List<ClassInfo> tempList = new ArrayList<>();
+        tempList = new ArrayList<>();
         int error = (int) Framework.GetError();
         if (error == Framework.ERROR_NONE) {
 
@@ -86,11 +95,11 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
             ClassInfo[] dateInfo = new ClassInfo[5];
             for (int i = 0; i < 5; i++) {
-                if (params[0]) {
+//                if (params[0]) {
                     dateInfo[i] = new ClassInfo(ScheduleFragment.getDay(i), Framework.GetDayUnix(i));
-                } else {
-                    dateInfo[i] = new ClassInfo(ScheduleFragment.getDay(i) + " " + Framework.GetDayNumber(i) + " " + ScheduleFragment.getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
-                }
+//                } else {
+//                    dateInfo[i] = new ClassInfo(ScheduleFragment.getDay(i) + " " + Framework.GetDayNumber(i) + " " + ScheduleFragment.getMonth((int) Framework.GetDayMonth(i)), Framework.GetDayUnix(i));
+//                }
                 tempList.add(dateInfo[i]);
             }
 
@@ -99,9 +108,9 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 datePosition[i] = tempList.indexOf(dateInfo[i]);
             }
 
-            List<ClassInfo> landscapeList = new ArrayList<>();
+            landscapeList = new ArrayList<>();
 
-            if (params[0]) {
+//            if (params[0]) {
                 size = tempList.size();
                 int longest = 0;
 
@@ -128,54 +137,100 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                         }
                     }
                 }
-            }
+//            }
 
             timeOfLastUpdate = (int) (System.currentTimeMillis() / 1000);
 
             ScheduleFragment.classArrayList.clear();
             if (params[0]) {
+
                 ScheduleFragment.classArrayList.addAll(landscapeList);
             } else {
                 ScheduleFragment.classArrayList.addAll(tempList);
             }
         }
+
+        landscape = params[0];
+
         return error;
     }
 
     @Override
     protected void onPostExecute(final Integer error) {
 
-        if (error == Framework.ERROR_NONE) {
-            ScheduleFragment.ca.notifyDataSetChanged();
-            if (datePickerWeek != null && datePickerStudent != null) {
-                // TODO: This should go in a function
-                // TODO: This should use strings.xml
-                datePickerWeek.setText(MainActivity.resources.getString(R.string.week) + " " + Framework.GetWeek());
-                // TODO: Add system that checks whose schedule you are looking at
-                String user = Framework.GetUser();
-                datePickerStudent.setText(user.equals(Framework.MY_SCHEDULE) ? MainActivity.resources.getString(R.string.my_schedule) : user);
+        if (error == Framework.ERROR_NONE || (error == Framework.ERROR_CONNECTION && ScheduleFragment.user.equals(Framework.MY_SCHEDULE))) {
 
-                int position = datePosition[dayOfWeek];
-                if (scroll && ScheduleFragment.classArrayList.size() > position) {
-                    Log.w("Scroll", "Scrolling to: " + position);
-                    ScheduleFragment.classList.smoothScrollToPosition(position);
-                    scroll = false;
+            if (error == Framework.ERROR_NONE && ScheduleFragment.user.equals(Framework.MY_SCHEDULE)) {
+
+                Gson gson = new Gson();
+                String jsonScheduleLand = gson.toJson(landscapeList);
+                String jsonSchedulePort = gson.toJson(tempList);
+
+                SharedPreferences.Editor editor = MainActivity.settings.edit();
+
+                editor.putString("classLand", jsonScheduleLand);
+                editor.putString("classPort", jsonSchedulePort);
+                editor.putString("classWeek", String.valueOf(Framework.GetWeek()));
+                editor.apply();
+
+            } else if (error == Framework.ERROR_CONNECTION) {
+
+                if (!MainActivity.settings.getString("classLand", "").equals("") && !MainActivity.settings.getString("classPort", "").equals("")) {
+
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<List<ClassInfo>>() {
+                    }.getType();
+
+                    ScheduleFragment.classArrayList.clear();
+                    List<ClassInfo> classList;
+                    if (landscape) {
+
+                        classList = gson.fromJson(MainActivity.settings.getString("classLand", ""), type);
+                    } else {
+
+                        classList = gson.fromJson(MainActivity.settings.getString("classPort", ""), type);
+                    }
+                    ScheduleFragment.classArrayList.addAll(classList);
+
+                    ScheduleFragment.ca.notifyDataSetChanged();
+                    if (datePickerWeek != null && datePickerStudent != null) {
+                        datePickerWeek.setText(MainActivity.resources.getString(R.string.week) + " " + MainActivity.settings.getString("classWeek", "0"));
+                        datePickerStudent.setText(MainActivity.resources.getString(R.string.my_schedule));
+                    }
+                }
+
+                Snackbar.make(MainActivity.drawer, MainActivity.resources.getString(R.string.offline), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(MainActivity.resources.getString(R.string.retry), new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                ScheduleFragment.createList();
+                            }
+                        })
+                        .show();
+            }
+
+            if (error == Framework.ERROR_NONE) {
+
+                ScheduleFragment.ca.notifyDataSetChanged();
+                if (datePickerWeek != null && datePickerStudent != null) {
+                    // TODO: This should go in a function
+                    datePickerWeek.setText(MainActivity.resources.getString(R.string.week) + " " + Framework.GetWeek());
+                    // TODO: Add system that checks whose schedule you are looking at
+                    String user = Framework.GetUser();
+                    datePickerStudent.setText(user.equals(Framework.MY_SCHEDULE) ? MainActivity.resources.getString(R.string.my_schedule) : user);
+
+                    int position = datePosition[dayOfWeek];
+                    if (scroll && ScheduleFragment.classArrayList.size() > position) {
+                        Log.w("Scroll", "Scrolling to: " + position);
+                        ScheduleFragment.classList.smoothScrollToPosition(position);
+                        scroll = false;
+                    }
                 }
             }
         } else if (error == Framework.ERROR_RIGHTS) {
             ScheduleFragment.user = "~me";
             Snackbar.make(MainActivity.drawer, MainActivity.resources.getString(R.string.rights), Snackbar.LENGTH_SHORT)
-                    .show();
-        } else {
-            // TODO: Get these strings from strings.xml
-            Snackbar.make(MainActivity.drawer, MainActivity.resources.getString(R.string.retry), Snackbar.LENGTH_INDEFINITE)
-                    .setAction(MainActivity.resources.getString(R.string.offline), new View.OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            ScheduleFragment.createList();
-                        }
-                    })
                     .show();
         }
 

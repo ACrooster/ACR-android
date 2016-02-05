@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     public static Resources resources = null;
     private static FragmentManager fragmentManager;
     private static ActionBar actionBar;
+    public static SharedPreferences settings;
 
     public static Menu menu;
 
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(true);
 
         // Sets the name and id in the header bar
-        SharedPreferences settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
+        settings = getSharedPreferences(StartActivity.PREFS_NAME, 0);
         View headerLayout = navigationView.getHeaderView(0);
         TextView name = (TextView)headerLayout.findViewById(R.id.student_name);
         TextView id = (TextView)headerLayout.findViewById(R.id.student_id);
@@ -263,6 +264,7 @@ public class MainActivity extends AppCompatActivity
                 ScheduleFragment.createList();
             } else {
 
+                currentFragment = sf;
                 finish();
             }
         }
