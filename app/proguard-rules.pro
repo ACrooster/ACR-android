@@ -13,3 +13,8 @@
 -keep class org.acra.** { *; }
 
 -keep class android.support.v7.widget.SearchView { *; }
+
+-keepattributes Signature
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.examples.android.model.** { *; }
+-keep class nl.acr.rooster.FriendInfo { *; }

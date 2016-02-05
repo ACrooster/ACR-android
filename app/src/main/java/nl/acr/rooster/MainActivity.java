@@ -47,7 +47,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 
 import go.framework.Framework;
 
@@ -176,7 +175,6 @@ public class MainActivity extends AppCompatActivity
             FriendsFragment.friendArrayList.clear();
             List<FriendInfo> friendList = gson.fromJson(settings.getString("friends", ""), type);
             FriendsFragment.friendArrayList.addAll(friendList);
-
         }
 
         invalidateOptionsMenu();
