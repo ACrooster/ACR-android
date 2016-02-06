@@ -418,13 +418,16 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
 
-            for (int i = 0; i < FriendsFragment.friendArrayList.size(); i++) {
-                if (FriendsFragment.friendArrayList.get(i).code.equals(ScheduleFragment.user)) {
+            if (FriendsFragment.friendArrayList.size() > 0) {
 
-                    Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.alreadyFriends), Snackbar.LENGTH_SHORT)
-                            .show();
+                for (int i = 0; i < FriendsFragment.friendArrayList.size(); i++) {
+                    if (FriendsFragment.friendArrayList.get(i).code.equals(ScheduleFragment.user)) {
 
-                    return true;
+                        Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.alreadyFriends), Snackbar.LENGTH_SHORT)
+                                .show();
+
+                        return true;
+                    }
                 }
             }
 
