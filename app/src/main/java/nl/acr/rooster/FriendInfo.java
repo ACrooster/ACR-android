@@ -2,8 +2,8 @@ package nl.acr.rooster;
 
 public class FriendInfo {
 
-    String name;
-    String code;
+    String name = "";
+    String code = "";
 
     FriendInfo(String name, String code) {
 

@@ -18,6 +18,7 @@ public class StartActivity extends AppCompatActivity {
     public static final String PREFS_NAME = "ACRPrefs";
     public static long RELOGIN_DATE = 1454527909;
     public static int TUTORIAL_VERSION = 1;
+    public static String SCHOOL = "amstelveencollege";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class StartActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
         // Set the school name
-        Framework.SetSchool("amstelveencollege");
+        Framework.SetSchool(SCHOOL);
 
         Calendar mCalendar = new GregorianCalendar();
         TimeZone mTimeZone = mCalendar.getTimeZone();

@@ -175,6 +175,9 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
             } else if (error == Framework.ERROR_CONNECTION) {
 
+                Framework.SetSchool(StartActivity.SCHOOL);
+                Framework.SetToken(MainActivity.settings.getString("token",""));
+
                 if (!MainActivity.settings.getString("classLand", "").equals("") && !MainActivity.settings.getString("classPort", "").equals("")) {
 
                     Gson gson = new Gson();
