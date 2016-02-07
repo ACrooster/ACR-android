@@ -418,18 +418,18 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
 
-            if (FriendsFragment.friendArrayList.size() > 0) {
-
-                for (int i = 0; i < FriendsFragment.friendArrayList.size(); i++) {
-                    if (FriendsFragment.friendArrayList.get(i).code.equals(ScheduleFragment.user)) {
-
-                        Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.alreadyFriends), Snackbar.LENGTH_SHORT)
-                                .show();
-
-                        return true;
-                    }
-                }
-            }
+//            if (FriendsFragment.friendArrayList.size() > 0) {
+//
+//                for (int i = 0; i < FriendsFragment.friendArrayList.size(); i++) {
+//                    if (FriendsFragment.friendArrayList.get(i).code.equals(ScheduleFragment.user)) {
+//
+//                        Snackbar.make(findViewById(R.id.drawer_layout), getResources().getString(R.string.alreadyFriends), Snackbar.LENGTH_SHORT)
+//                                .show();
+//
+//                        return true;
+//                    }
+//                }
+//            }
 
             MaterialDialog.Builder name = new MaterialDialog.Builder(this)
                     .title(getText(R.string.addFriend))
