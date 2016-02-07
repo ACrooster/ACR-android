@@ -462,6 +462,11 @@ public class MainActivity extends AppCompatActivity
     public static final Comparator<FriendInfo> nameSorter = new Comparator<FriendInfo>() {
         @Override
         public int compare(FriendInfo lhs, FriendInfo rhs) {
+
+            if (lhs == null || rhs == null) {
+                return 0;
+            }
+
             return lhs.name.compareToIgnoreCase(rhs.name);
         }
     };
