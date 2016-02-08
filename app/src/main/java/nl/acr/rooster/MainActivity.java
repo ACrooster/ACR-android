@@ -176,6 +176,8 @@ public class MainActivity extends AppCompatActivity
             FriendsFragment.friendArrayList.clear();
             List<FriendInfo> friendList = gson.fromJson(settings.getString("friends", ""), type);
             FriendsFragment.friendArrayList.addAll(friendList);
+
+            Log.w("Friends", settings.getString("friends", ""));
         }
 
         invalidateOptionsMenu();
@@ -463,7 +465,11 @@ public class MainActivity extends AppCompatActivity
         @Override
         public int compare(FriendInfo lhs, FriendInfo rhs) {
 
-            if (lhs == null || rhs == null) {
+            if (lhs.name == null ^ rhs.name == null) {
+                return (lhs.name == null) ? -1 : 1;
+            }
+
+            if (lhs.name == null && rhs.name == null) {
                 return 0;
             }
 
