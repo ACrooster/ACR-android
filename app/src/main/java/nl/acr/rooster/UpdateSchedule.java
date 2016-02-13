@@ -17,10 +17,14 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import go.framework.Framework;
 
@@ -69,6 +73,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
             boolean endOfDay = false;
 
+            // TODO: I am pretty sure we are not using unixEndTime for free hours
             int size = tempList.size();
             for (int i = 0; i < size; i++) {
                 int free;
@@ -176,7 +181,11 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
             } else if (error == Framework.ERROR_CONNECTION) {
 
                 Framework.SetSchool(StartActivity.SCHOOL);
-                Framework.SetToken(MainActivity.settings.getString("token",""));
+                Framework.SetToken(MainActivity.settings.getString("token", ""));
+                Calendar mCalendar = new GregorianCalendar();
+                TimeZone mTimeZone = mCalendar.getTimeZone();
+                int mGMTOffset = mTimeZone.getRawOffset();
+                Framework.SetTimeDiff(TimeUnit.HOURS.convert(mGMTOffset, TimeUnit.MILLISECONDS));
 
                 if (!MainActivity.settings.getString("classLand", "").equals("") && !MainActivity.settings.getString("classPort", "").equals("")) {
 
