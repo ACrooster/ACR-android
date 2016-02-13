@@ -46,6 +46,14 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
     protected void onPreExecute() {
 
         MainActivity.refreshSchedule.setRefreshing(true);
+
+        Framework.SetSchool(StartActivity.SCHOOL);
+        Framework.SetToken(MainActivity.settings.getString("token", ""));
+        Calendar mCalendar = new GregorianCalendar();
+        TimeZone mTimeZone = mCalendar.getTimeZone();
+        int mGMTOffset = mTimeZone.getRawOffset();
+        Framework.SetTimeDiff(TimeUnit.HOURS.convert(mGMTOffset, TimeUnit.MILLISECONDS));
+
     }
 
     final Comparator<ClassInfo> classSorter = new Comparator<ClassInfo>() {
@@ -179,13 +187,6 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 editor.apply();
 
             } else if (error == Framework.ERROR_CONNECTION) {
-
-                Framework.SetSchool(StartActivity.SCHOOL);
-                Framework.SetToken(MainActivity.settings.getString("token", ""));
-                Calendar mCalendar = new GregorianCalendar();
-                TimeZone mTimeZone = mCalendar.getTimeZone();
-                int mGMTOffset = mTimeZone.getRawOffset();
-                Framework.SetTimeDiff(TimeUnit.HOURS.convert(mGMTOffset, TimeUnit.MILLISECONDS));
 
                 if (!MainActivity.settings.getString("classLand", "").equals("") && !MainActivity.settings.getString("classPort", "").equals("")) {
 

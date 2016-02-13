@@ -30,11 +30,6 @@ public class StartActivity extends AppCompatActivity {
         // Set the school name
         Framework.SetSchool(SCHOOL);
 
-        Calendar mCalendar = new GregorianCalendar();
-        TimeZone mTimeZone = mCalendar.getTimeZone();
-        int mGMTOffset = mTimeZone.getRawOffset();
-        Framework.SetTimeDiff(TimeUnit.HOURS.convert(mGMTOffset, TimeUnit.MILLISECONDS));
-
         if (settings.contains("token") && settings.getLong("login_date", 0) > RELOGIN_DATE) {
             Framework.SetToken(settings.getString("token", ""));
             Intent goToSchedule = new Intent(getApplicationContext(), MainActivity.class);
