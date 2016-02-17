@@ -140,6 +140,9 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                             offset = i + 1;
                         }
                     }
+                    if (i == datePosition[day]) {
+                        tempList.set(i, new ClassInfo(ScheduleFragment.getDay(day) + " " + Framework.GetDayNumber(day) + " " + ScheduleFragment.getMonth((int) Framework.GetDayMonth(day)), Framework.GetDayUnix(day)));
+                    }
                 }
 //            }
 
