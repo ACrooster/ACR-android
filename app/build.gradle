@@ -52,6 +52,7 @@ dependencies {
     compile 'com.wdullaer:materialdatetimepicker:2.0.2'
     compile 'com.github.afollestad.material-dialogs:core:0.8.5.2'
     compile 'com.google.code.gson:gson:2.5'
-    compile 'ch.tutti.android.bottomsheet:library:1.0'
+//    compile 'ch.tutti.android.bottomsheet:library:1.0'
     compile project(':framework')
+    compile project(':bottomsheet')
 }

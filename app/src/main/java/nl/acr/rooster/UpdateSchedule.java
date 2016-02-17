@@ -64,7 +64,8 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
             int classCount = (int) Framework.GetClassCount();
             for (int i = 0; i < classCount; i++) {
                 if (Framework.IsClassValid(i)) {
-                    tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.IsEmployee() ? Framework.GetClassGroup(i) : Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassEndUnix(i), Framework.GetClassTimeSlot(i)));
+//                    tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.IsEmployee() ? Framework.GetClassGroup(i) : Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassEndUnix(i), Framework.GetClassTimeSlot(i)));
+                    tempList.add(new ClassInfo(i));
                 }
             }
 
@@ -80,7 +81,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                     free = tempList.get(i).timeSlot == 0 ? 0 : tempList.get(i).timeSlot - 1;
 
                     for (int j = 0; j < free; j++) {
-                        tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
+                        tempList.add(new ClassInfo(tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
                     }
                 }
 
@@ -93,7 +94,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 }
 
                 for (int j = 0; j < free; j++) {
-                    tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix + j + 1, tempList.get(i).timeStartUnix + j + 1, tempList.get(i).timeSlot + j + 1));
+                    tempList.add(new ClassInfo(tempList.get(i).timeStartUnix + j + 1, tempList.get(i).timeSlot + j + 1));
                 }
             }
 

@@ -37,6 +37,12 @@
 
     <string name="my_schedule">Mijn rooster</string>
 
+    <string name="more_info">Meer informatie</string>
+    <string name="change">Wijzigingen</string>
+    <string name="teacher">Docent</string>
+    <string name="classRoom">Lokaal</string>
+    <string name="group">Klas</string>
+
     <!--Tutorial-->
     <string name="tutorial">Uitleg</string>
     <string name="tutorial_text">

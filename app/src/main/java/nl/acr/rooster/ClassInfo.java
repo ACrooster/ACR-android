@@ -5,29 +5,58 @@ import android.graphics.Color;
 import go.framework.Framework;
 
 class ClassInfo {
-    String subject;
-    String teacher;
-    String timeStart;
-    String timeEnd;
-    String classRoom;
+    String subject = "";
+    String teacher = "";
+    String group = "";
+    String timeStart = "";
+    String timeEnd = "";
+    String classRoom = "";
     final int status;
 
-    long timeStartUnix;
-    long timeEndUnix;
-    int timeSlot;
+    long timeStartUnix = 0;
+    long timeEndUnix = 0;
+    int timeSlot = 0;
+
+    String changeDescription = "";
 
     String date;
 
-    ClassInfo(String subject, String teacher, String timeStart, String timeEnd, String classRoom, long status, long timeStartUnix, long timeEndUnix, long timeSlot) {
-        this.subject = subject;
-        this.teacher = teacher;
-        this.timeStart = timeStart;
-        this.timeEnd = timeEnd;
-        this.classRoom = classRoom;
-        this.status = (int)status;
+//    ClassInfo(String subject, String teacher, String timeStart, String timeEnd, String classRoom, long status, long timeStartUnix, long timeEndUnix, long timeSlot) {
+//        this.subject = subject;
+//        this.teacher = teacher;
+//        this.timeStart = timeStart;
+//        this.timeEnd = timeEnd;
+//        this.classRoom = classRoom;
+//        this.status = (int)status;
+//
+//        this.timeStartUnix = timeStartUnix;
+//        this.timeEndUnix = timeEndUnix;
+//        this.timeSlot = (int)timeSlot;
+//    }
 
-        this.timeStartUnix = timeStartUnix;
-        this.timeEndUnix = timeEndUnix;
+    ClassInfo(int id) {
+
+        this.subject = Framework.GetClassName(id);
+        this.teacher = Framework.GetClassTeacher(id);
+        this.group = Framework.GetClassGroup(id);
+        this.timeStart = Framework.GetClassStartTime(id);
+        this.timeEnd = Framework.GetClassEndTime(id);
+        this.classRoom = Framework.GetClassRoom(id);
+        this.status = (int)Framework.GetClassStatus(id);
+
+        this.timeStartUnix = Framework.GetClassStartUnix(id);
+        this.timeEndUnix = Framework.GetClassEndUnix(id);
+        this.timeSlot = (int)Framework.GetClassTimeSlot(id);
+
+        this.changeDescription = Framework.GetChangeDescription(id);
+    }
+
+    ClassInfo(long timeUnix, long timeSlot) {
+
+        this.status = (int)Framework.STATUS_FREE;
+
+        this.timeStartUnix = timeUnix;
+        this.timeEndUnix = timeUnix;
         this.timeSlot = (int)timeSlot;
     }
 

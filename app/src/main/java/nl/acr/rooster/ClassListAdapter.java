@@ -29,9 +29,9 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
     }
 
     @Override
-    public void onBindViewHolder(ClassViewHolder holder, int position) {
+    public void onBindViewHolder(ClassViewHolder holder, final int position) {
         if (position < classInfoList.size()) {
-            ClassInfo ci = classInfoList.get(position);
+            final ClassInfo ci = classInfoList.get(position);
             if (ci.status == Framework.STATUS_DATE) {
                 holder.card.setVisibility(View.GONE);
                 holder.date.setVisibility(View.VISIBLE);
@@ -45,21 +45,32 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
                 holder.date.setVisibility(View.GONE);
 
                 holder.subject.setText(ci.subject);
-                holder.teacher.setText(ci.teacher);
+                if (Framework.IsEmployee()) {
+
+                    holder.teacher.setText(ci.group);
+                } else {
+
+                    holder.teacher.setText(ci.teacher);
+                }
                 holder.timeStart.setText(ci.timeStart);
                 holder.timeEnd.setText(ci.timeEnd);
                 holder.classRoom.setText(ci.classRoom);
                 holder.card.setCardBackgroundColor(ci.getColor());
 
-                if (ci.status == Framework.STATUS_FREE || ci.status == Framework.STATUS_CANCELLED) {
+                if (ci.status == Framework.STATUS_FREE) {
                     holder.card.setCardElevation(0);
                     holder.card.setClickable(false);
                 } else {
-                    holder.card.setCardElevation(2);
+                    if (ci.status ==  Framework.STATUS_CANCELLED) {
+                        holder.card.setCardElevation(0);
+                    } else {
+                        holder.card.setCardElevation(2);
+                    }
                     holder.card.setClickable(true);
                     holder.card.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            MoreInfoActivity.selectedClass = ci;
                             v.getContext().startActivity(new Intent(v.getContext(), MoreInfoActivity.class));
                         }
                     });

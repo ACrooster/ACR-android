@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/more_info"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/imageView2"
-        android:background="#2196f3"
-        android:layout_alignBottom="@+id/gridLayout"
-        android:elevation="4dp" />
-    android:background="#ffffff"
+        android:id="@+id/header"
+        android:background="#ffffff"
+        android:layout_alignBottom="@+id/gridLayout" />
 
     <GridLayout
         android:layout_width="match_parent"
@@ -20,7 +20,6 @@
         android:padding="2dp"
         android:rowCount="2"
         android:id="@+id/gridLayout"
-        android:elevation="4dp"
         android:layout_alignParentEnd="false"
         android:layout_alignWithParentIfMissing="false"
         android:layout_alignParentRight="false">
@@ -30,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="na"
+            tools:text="nat"
             android:id="@+id/subject"
             android:layout_row="0"
             android:layout_column="1"
@@ -42,128 +41,92 @@
 
     </GridLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/imageView2"
-        android:layout_alignParentLeft="true">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:columnCount="3"
+        android:rowCount="4">
 
-        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            card_view:cardUseCompatPadding="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_margin="8dp">
+            android:text="@string/change"
+            android:id="@+id/change"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_margin="8dp"
+            android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Informatie"
-                    android:textSize="24dp"
-                    android:layout_margin="4dp"
-                    android:textColor="@color/colorAccent" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Start tijd:\n9:30"
-                    android:id="@+id/timeStart"
-                    android:layout_margin="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Eind tijd:\n10:30"
-                    android:id="@+id/timeEnd"
-                    android:layout_margin="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Docent:\nDCT"
-                    android:id="@+id/teacher"
-                    android:layout_margin="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lokaal:\n0.000"
-                    android:id="@+id/classRoom"
-                    android:layout_margin="4dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Klas:\n6V.na1"
-                    android:id="@+id/className"
-                    android:layout_margin="4dp" />
-
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            card_view:cardUseCompatPadding="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:layout_margin="8dp">
+            tools:text="Het lokaal is gewijzigd (was 3042)."
+            android:id="@+id/change_description"
+            android:layout_margin="8dp"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:layout_gravity="right" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/teacher"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_margin="8dp"
+            android:textStyle="bold"
+            android:id="@+id/textView2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mensen met deze les"
-                    android:textSize="24dp"
-                    android:layout_margin="4dp"
-                    android:textColor="@color/colorAccent" />
+        <TextView
+            tools:text="VRI"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/teacher"
+            android:layout_margin="8dp"
+            android:layout_row="1"
+            android:layout_column="2"
+            android:layout_gravity="right" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/classRoom"
+            android:layout_row="2"
+            android:layout_column="0"
+            android:layout_margin="8dp"
+            android:textStyle="bold"
+            android:id="@+id/textView3" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tim Huizinga"
-                    android:layout_margin="4dp" />
+        <TextView
+            tools:text="0.008"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/classRoom"
+            android:layout_margin="8dp"
+            android:layout_row="2"
+            android:layout_column="2"
+            android:layout_gravity="right" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Auke Scheepstra"
-                    android:layout_margin="4dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/group"
+            android:layout_row="3"
+            android:layout_column="0"
+            android:layout_margin="8dp"
+            android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mats Bulterman"
-                    android:layout_margin="4dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="6v1"
+            android:id="@+id/group"
+            android:layout_margin="8dp"
+            android:layout_row="3"
+            android:layout_column="2"
+            android:layout_gravity="right" />
 
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
+    </GridLayout>
 
 </RelativeLayout>
