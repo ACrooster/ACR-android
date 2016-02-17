@@ -19,6 +19,7 @@
 
     <string name="relogin">Je moet opnieuw inloggen</string>
     <string name="rights">Je hebt geen rechten om dit te kunnen zien</string>
+    <string name="user_existance">Deze gebruiker bestaat niet</string>
     <string name="offline">Je bent op dit moment niet online</string>
     <string name="retry">Opnieuw proberen</string>
 

@@ -85,12 +85,12 @@ class ClassInfo {
 
             float[] hsv = new float[3];
             Color.colorToHSV(color, hsv);
-            hsv[2] *= 0.7f; // value component
+            hsv[2] *= 0.7f;
             color = Color.HSVToColor(hsv);
-        } else if (timeStartUnix - 60 * 10 < currentUnix && timeStartUnix > currentUnix) {
+        } else if (timeStartUnix - 60 * 10 < currentUnix && timeStartUnix > currentUnix && status != Framework.STATUS_FREE) {
             float[] hsv = new float[3];
             Color.colorToHSV(color, hsv);
-            hsv[2] *= 0.9f; // value component
+            hsv[2] *= 0.9f;
             color = Color.HSVToColor(hsv);
         }
 

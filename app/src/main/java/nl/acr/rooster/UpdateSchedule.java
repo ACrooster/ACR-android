@@ -1,17 +1,7 @@
-package nl.acr.rooster;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
+package nl.acr.rooster; import android.content.SharedPreferences; import android.os.AsyncTask; import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.view.textservice.SpellCheckerInfo;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -22,7 +12,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +31,8 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
     List<ClassInfo> tempList;
     List<ClassInfo> landscapeList;
 
-    @Override
+    private static String previousUser = Framework.MY_SCHEDULE;
+
     protected void onPreExecute() {
 
         MainActivity.refreshSchedule.setRefreshing(true);
@@ -65,6 +55,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
     @Override
     protected Integer doInBackground(Boolean... params) {
+        Framework.RequestUserData();
         Framework.RequestScheduleData(ScheduleFragment.weekUnix, ScheduleFragment.user);
         tempList = new ArrayList<>();
         int error = (int) Framework.GetError();
@@ -73,7 +64,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
             int classCount = (int) Framework.GetClassCount();
             for (int i = 0; i < classCount; i++) {
                 if (Framework.IsClassValid(i)) {
-                    tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassEndUnix(i), Framework.GetClassTimeSlot(i)));
+                    tempList.add(new ClassInfo(Framework.GetClassName(i), Framework.IsEmployee() ? Framework.GetClassGroup(i) : Framework.GetClassTeacher(i), Framework.GetClassStartTime(i), Framework.GetClassEndTime(i), Framework.GetClassRoom(i), Framework.GetClassStatus(i), Framework.GetClassStartUnix(i), Framework.GetClassEndUnix(i), Framework.GetClassTimeSlot(i)));
                 }
             }
 
@@ -86,7 +77,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
             for (int i = 0; i < size; i++) {
                 int free;
                 if (i == 0 || endOfDay) {
-                    free = tempList.get(i).timeSlot - 1;
+                    free = tempList.get(i).timeSlot == 0 ? 0 : tempList.get(i).timeSlot - 1;
 
                     for (int j = 0; j < free; j++) {
                         tempList.add(new ClassInfo("", "", "", "", "", Framework.STATUS_FREE, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeStartUnix - j - 1, tempList.get(i).timeSlot - j - 1));
@@ -94,7 +85,7 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                 }
 
                 if (i + 1 < size) {
-                    free = tempList.get(i + 1).timeSlot - tempList.get(i).timeSlot - 1;
+                    free = tempList.get(i+1).timeSlot == 0 || tempList.get(i).timeSlot == 0 ? 0 : tempList.get(i + 1).timeSlot - tempList.get(i).timeSlot - 1;
                     endOfDay = (tempList.get(i + 1).timeStartUnix - tempList.get(i).timeStartUnix) > 10 * 3600;
                 } else {
                     free = 0;
@@ -171,6 +162,14 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
     @Override
     protected void onPostExecute(final Integer error) {
 
+        if (error == Framework.ERROR_USER_EXISTENCE) {
+
+            Snackbar.make(MainActivity.drawer, MainActivity.resources.getString(R.string.user_existance), Snackbar.LENGTH_SHORT)
+                    .show();
+
+            ScheduleFragment.user = previousUser;
+        }
+
         if (error == Framework.ERROR_NONE || (error == Framework.ERROR_CONNECTION && ScheduleFragment.user.equals(Framework.MY_SCHEDULE))) {
 
             if (error == Framework.ERROR_NONE && ScheduleFragment.user.equals(Framework.MY_SCHEDULE)) {
@@ -221,6 +220,8 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
                             }
                         })
                         .show();
+
+                ScheduleFragment.user = previousUser;
             }
 
             if (error == Framework.ERROR_NONE) {
@@ -235,16 +236,19 @@ public class UpdateSchedule extends AsyncTask<Boolean, Void, Integer> {
 
                     int position = datePosition[dayOfWeek];
                     if (scroll && ScheduleFragment.classArrayList.size() > position) {
-                        Log.w("Scroll", "Scrolling to: " + position);
                         ScheduleFragment.classList.smoothScrollToPosition(position);
                         scroll = false;
                     }
                 }
+
+                previousUser = ScheduleFragment.user;
             }
         } else if (error == Framework.ERROR_RIGHTS) {
             ScheduleFragment.user = "~me";
             Snackbar.make(MainActivity.drawer, MainActivity.resources.getString(R.string.rights), Snackbar.LENGTH_SHORT)
                     .show();
+
+            ScheduleFragment.user = previousUser;
         }
 
         MainActivity.progressBar.setVisibility(View.GONE);

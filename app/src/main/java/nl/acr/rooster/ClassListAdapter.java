@@ -50,7 +50,7 @@ public class ClassListAdapter extends RecyclerView.Adapter<ClassListAdapter.Clas
                 holder.classRoom.setText(ci.classRoom);
                 holder.card.setCardBackgroundColor(ci.getColor());
 
-                if (ci.status == Framework.STATUS_FREE) {
+                if (ci.status == Framework.STATUS_FREE || ci.status == Framework.STATUS_CANCELLED) {
                     holder.card.setCardElevation(0);
                     holder.card.setClickable(false);
                 } else {
