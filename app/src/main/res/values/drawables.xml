@@ -4,7 +4,6 @@
     <item name="ic_info" type="drawable">@drawable/ic_info_legacy</item>
     <item name="ic_schedule" type="drawable">@drawable/ic_schedule_legacy</item>
     <item name="ic_search" type="drawable">@drawable/ic_search_legacy</item>
-    <item name="ic_settings" type="drawable">@drawable/ic_settings_legacy</item>
-    <item name="ic_star" type="drawable">@drawable/ic_star</item>
-    <item name="ic_today" type="drawable">@drawable/ic_today</item>
+    <item name="ic_star" type="drawable">@drawable/ic_star_legacy</item>
+    <item name="ic_today" type="drawable">@drawable/ic_today_legacy</item>
 </resources>

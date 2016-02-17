@@ -327,10 +327,6 @@ public class MainActivity extends AppCompatActivity
 
             replaceFragment(ff);
             currentFragment = ff;
-        } else if (id == R.id.nav_preferences) {
-
-            Intent goToPreferences = new Intent(getApplicationContext(), PreferencesActivity.class);
-            startActivity(goToPreferences);
         } else if (id == R.id.nav_info) {
 
             MaterialDialog.Builder about = new MaterialDialog.Builder(this)

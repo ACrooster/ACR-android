@@ -15,7 +15,6 @@
     <string name="title_fragment_friends">Vrienden</string>
 
     <string name="title_activity_login">Inloggen</string>
-    <string name="title_activity_preferences">Instellingen</string>
 
     <string name="relogin">Je moet opnieuw inloggen</string>
     <string name="rights">Je hebt geen rechten om dit te kunnen zien</string>
@@ -32,7 +31,6 @@
     <string name="today_title">Vandaag</string>
     <string name="star_title">Als vriend toe voegen</string>
 
-    <string name="nav_preferences">Instellingen</string>
     <string name="nav_info">Over</string>
 
     <string name="my_schedule">Mijn rooster</string>
